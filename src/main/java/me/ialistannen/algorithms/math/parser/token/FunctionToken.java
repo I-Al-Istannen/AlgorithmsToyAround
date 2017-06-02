@@ -10,6 +10,7 @@ import me.ialistannen.treeviewer.Tree;
 public class FunctionToken extends BaseToken {
 
   private Function function;
+  private int registeredArgumentCount = 0;
 
   /**
    * @param tokenText The text of the token
@@ -30,6 +31,20 @@ public class FunctionToken extends BaseToken {
   @Override
   public double evaluate(Tree node) {
     return getFunction().evaluate(getChildrenValues(node));
+  }
+
+  /**
+   * Increments the internal counter for arguments
+   */
+  public void addRegisteredArgumentCount() {
+    this.registeredArgumentCount++;
+  }
+
+  /**
+   * @return the internal counter for arguments
+   */
+  public int getRegisteredArgumentCount() {
+    return registeredArgumentCount;
   }
 
   @Override

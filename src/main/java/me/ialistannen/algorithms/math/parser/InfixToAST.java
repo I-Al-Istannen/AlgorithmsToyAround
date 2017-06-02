@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Queue;
-import java.util.stream.Collectors;
 import me.ialistannen.algorithms.math.parser.ast.Node;
 import me.ialistannen.algorithms.math.parser.mathoperations.Operator;
 import me.ialistannen.algorithms.math.parser.token.FunctionToken;
@@ -45,6 +44,13 @@ public class InfixToAST {
           addNodeToOutput(token);
           break;
         case PARENTHESIS:
+          // add one to the argument count of a function, if no closing bracket follows
+          // dirty hack to get the correct amount of arguments
+          if (operatorStack.peekFirst() instanceof FunctionToken) {
+            if (tokens.peek() != null && !tokens.peek().getTokenText().equals(")")) {
+              ((FunctionToken) operatorStack.peekFirst()).addRegisteredArgumentCount();
+            }
+          }
           handleParenthesis(token);
           break;
         case FUNCTION_SEPARATOR:
@@ -62,17 +68,10 @@ public class InfixToAST {
     if (!operatorStack.isEmpty() && operatorStack.peekFirst().getType() == TokenType.PARENTHESIS) {
       throw new IllegalArgumentException("Unbalanced parenthesis.");
     }
-    System.out.println(operatorStack);
+
     while (!operatorStack.isEmpty()) {
       addNodeToOutput(operatorStack.pollFirst());
     }
-
-    System.out.println("Left over: " +
-        outputStack.stream()
-            .map(Node::getToken)
-            .map(Token::getTokenText)
-            .collect(Collectors.joining(" "))
-    );
 
     return outputStack.peekFirst();
   }
@@ -98,6 +97,7 @@ public class InfixToAST {
 
   private void handleFunctionSeparator() {
     while (!operatorStack.isEmpty()) {
+      incrementArgumentCountForNextFunction();
       Token first = operatorStack.peekFirst();
       if (first.getTokenText().equals("(")) {
         return;
@@ -105,6 +105,18 @@ public class InfixToAST {
       addNodeToOutput(operatorStack.pollFirst());
     }
     throw new IllegalArgumentException("Unbalanced parenthesis when trying to parse a function.");
+  }
+
+  /**
+   * Increments the argument count for the next function on the stack
+   */
+  private void incrementArgumentCountForNextFunction() {
+    for (Token token : operatorStack) {
+      if (token instanceof FunctionToken) {
+        ((FunctionToken) token).addRegisteredArgumentCount();
+        break;
+      }
+    }
   }
 
   private void handleParenthesis(Token token) {
@@ -132,7 +144,17 @@ public class InfixToAST {
       return;
     }
     if (token instanceof FunctionToken) {
-      int argumentCount = ((FunctionToken) token).getFunction().getArgumentCount();
+      FunctionToken functionToken = (FunctionToken) token;
+      int argumentCount = functionToken.getFunction().getArgumentCount();
+
+      if (functionToken.getRegisteredArgumentCount() != argumentCount) {
+        throw new IllegalArgumentException(String.format(
+            "Wrong number of arguments for '%s', expected %d got %d",
+            functionToken.getFunction(),
+            argumentCount,
+            functionToken.getRegisteredArgumentCount()
+        ));
+      }
 
       Node functionNode = new Node(token);
       functionNode.addChildren(pollNodesAndReverse(argumentCount));
