@@ -7,6 +7,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Queue;
 import me.ialistannen.algorithms.math.parser.ast.Node;
+import me.ialistannen.algorithms.math.parser.mathoperations.Function;
 import me.ialistannen.algorithms.math.parser.mathoperations.Operator;
 import me.ialistannen.algorithms.math.parser.token.FunctionToken;
 import me.ialistannen.algorithms.math.parser.token.OperatorToken;
@@ -145,19 +146,22 @@ public class InfixToAST {
     }
     if (token instanceof FunctionToken) {
       FunctionToken functionToken = (FunctionToken) token;
-      int argumentCount = functionToken.getFunction().getArgumentCount();
+      Function function = functionToken.getFunction();
+      int minArgumentCount = function.getMinArgumentCount();
+      int maxArgumentCount = function.getMaxArgumentCount();
+      int foundArgumentCount = functionToken.getRegisteredArgumentCount();
 
-      if (functionToken.getRegisteredArgumentCount() != argumentCount) {
+      if (foundArgumentCount < minArgumentCount || foundArgumentCount > maxArgumentCount) {
         throw new IllegalArgumentException(String.format(
-            "Wrong number of arguments for '%s', expected %d got %d",
-            functionToken.getFunction(),
-            argumentCount,
-            functionToken.getRegisteredArgumentCount()
+            "Wrong number of arguments for '%s', expected %d to %d got %d",
+            function,
+            minArgumentCount, maxArgumentCount,
+            foundArgumentCount
         ));
       }
 
       Node functionNode = new Node(token);
-      functionNode.addChildren(pollNodesAndReverse(argumentCount));
+      functionNode.addChildren(pollNodesAndReverse(foundArgumentCount));
 
       outputStack.addFirst(functionNode);
       return;

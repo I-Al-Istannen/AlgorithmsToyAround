@@ -12,19 +12,34 @@ public enum BaseFunction implements me.ialistannen.algorithms.math.parser.mathop
   SINUS(1, "sin", getOperator(Math::sin)),
   COSINUS(1, "cos", getOperator(Math::cos)),
   TANGENS(1, "tan", getOperator(Math::tan)),
-  MAX(2, "max", getOperator(Math::max));
+  MAX(2, "max", getOperator(Math::max)),
+  SUM(1, Integer.MAX_VALUE, "sum", args -> args.stream().mapToDouble(Double::doubleValue).sum());
 
-  private int argumentCount;
+  private int minArgumentCount;
+  private int maxArgumentCount;
   private String keyword;
   private Function<List<Double>, Double> computer;
 
   /**
-   * @param argumentCount The number of arguments
+   * @param argumentCount The number of arguments. Will be the minimum and the maximum one
+   * @param keyword The keyword
+   * @param computer The computing function
+   * @see #BaseFunction(int, int, String, Function)
+   */
+  BaseFunction(int argumentCount, String keyword, Function<List<Double>, Double> computer) {
+    this(argumentCount, argumentCount, keyword, computer);
+  }
+
+  /**
+   * @param minArgumentCount The minimum number of arguments
+   * @param maxArgumentCount The maximum number of arguments
    * @param keyword The keyword
    * @param computer The computing function
    */
-  BaseFunction(int argumentCount, String keyword, Function<List<Double>, Double> computer) {
-    this.argumentCount = argumentCount;
+  BaseFunction(int minArgumentCount, int maxArgumentCount, String keyword,
+      Function<List<Double>, Double> computer) {
+    this.minArgumentCount = minArgumentCount;
+    this.maxArgumentCount = maxArgumentCount;
     this.keyword = keyword;
     this.computer = computer;
   }
@@ -35,8 +50,13 @@ public enum BaseFunction implements me.ialistannen.algorithms.math.parser.mathop
   }
 
   @Override
-  public int getArgumentCount() {
-    return argumentCount;
+  public int getMinArgumentCount() {
+    return minArgumentCount;
+  }
+
+  @Override
+  public int getMaxArgumentCount() {
+    return maxArgumentCount;
   }
 
   @Override

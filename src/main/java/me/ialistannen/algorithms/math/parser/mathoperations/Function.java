@@ -8,9 +8,19 @@ import java.util.List;
 public interface Function extends MathOperation {
 
   /**
-   * @return The argument count for a function.
+   * @return The minimum number of arguments this function needs.
    */
-  int getArgumentCount();
+  int getMinArgumentCount();
+
+  /**
+   * Returns the maximum number of arguments this method can take.
+   * <p>Default implementation returns {@link #getMinArgumentCount()}
+   *
+   * @return The maximum number of arguments this method can take.
+   */
+  default int getMaxArgumentCount() {
+    return getMinArgumentCount();
+  }
 
   /**
    * Evaluates the function.

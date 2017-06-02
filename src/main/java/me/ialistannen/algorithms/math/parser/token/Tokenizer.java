@@ -120,8 +120,6 @@ public class Tokenizer {
       tokens.add(token);
     }
 
-    tokens.forEach(System.out::println);
-
     return tokens;
   }
 
