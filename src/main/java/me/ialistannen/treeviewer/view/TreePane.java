@@ -1,0 +1,62 @@
+package me.ialistannen.treeviewer.view;
+
+import java.util.ArrayList;
+import java.util.List;
+import javafx.geometry.Insets;
+import javafx.scene.control.ScrollPane;
+import me.ialistannen.treeviewer.Tree;
+import org.abego.treelayout.NodeExtentProvider;
+import org.abego.treelayout.TreeLayout;
+import org.abego.treelayout.util.AbstractTreeForTreeLayout;
+import org.abego.treelayout.util.DefaultConfiguration;
+
+/**
+ * A {@link javafx.scene.layout.Pane} displaying an AST
+ */
+public class TreePane extends ScrollPane {
+
+  /**
+   * @param ast The root node of the AST
+   */
+  public TreePane(Tree ast) {
+    AbstractTreeForTreeLayout<Tree> layout = new AbstractTreeForTreeLayout<Tree>(ast) {
+      @Override
+      public Tree getParent(Tree tree) {
+        return tree.getParent();
+      }
+
+      @Override
+      public List<Tree> getChildrenList(Tree tree) {
+        return new ArrayList<>(tree.getChildren());
+      }
+    };
+
+    DefaultConfiguration<Tree> defaultConfiguration = new DefaultConfiguration<>(
+        20, 20
+    );
+
+    NodeExtentProvider<Tree> nodeExtentProvider = new NodeExtentProvider<Tree>() {
+      @Override
+      public double getWidth(Tree tree) {
+        return 50;
+      }
+
+      @Override
+      public double getHeight(Tree tree) {
+        return 50;
+      }
+    };
+
+    TreeLayout<Tree> treeLayout = new TreeLayout<>(
+        layout, nodeExtentProvider, defaultConfiguration
+    );
+
+    TreeComponent treeComponent = new TreeComponent(treeLayout);
+
+    setPadding(new Insets(20));
+    setMaxWidth(Double.MAX_VALUE);
+    setMaxHeight(Double.MAX_VALUE);
+
+    setContent(treeComponent);
+  }
+}
