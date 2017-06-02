@@ -133,14 +133,19 @@ public class InfixToAST {
     }
     if (token instanceof FunctionToken) {
       int argumentCount = ((FunctionToken) token).getFunction().getArgumentCount();
+
       Node functionNode = new Node(token);
       functionNode.addChildren(pollNodesAndReverse(argumentCount));
+
       outputStack.addFirst(functionNode);
       return;
     }
     if (token instanceof OperatorToken) {
+      int argumentCount = ((OperatorToken) token).getOperator().isUnary() ? 1 : 2;
+
       Node operatorNode = new Node(token);
-      operatorNode.addChildren(pollNodesAndReverse(2));
+      operatorNode.addChildren(pollNodesAndReverse(argumentCount));
+
       outputStack.addFirst(operatorNode);
       return;
     }

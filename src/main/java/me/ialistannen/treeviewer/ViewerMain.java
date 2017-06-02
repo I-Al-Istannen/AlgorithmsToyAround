@@ -89,7 +89,7 @@ public class ViewerMain extends Application {
 
     primaryStage.setScene(new Scene(pane));
 
-    primaryStage.setTitle(input);
+    primaryStage.setTitle(input + "\t\t" + ast.evaluate());
     primaryStage.setMaxHeight(1000);
     primaryStage.setMaxWidth(1200);
     primaryStage.show();

@@ -3,9 +3,7 @@ package me.ialistannen.algorithms.math.parser.token;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +12,7 @@ import me.ialistannen.algorithms.math.parser.mathoperations.MathOperation;
 import me.ialistannen.algorithms.math.parser.mathoperations.Operator;
 import me.ialistannen.algorithms.math.parser.mathoperations.impl.BaseFunction;
 import me.ialistannen.algorithms.math.parser.mathoperations.impl.BaseOperator;
+import me.ialistannen.collections.CheapMultiMap;
 
 /**
  * Tokenize a String in usable math tokens
@@ -24,7 +23,7 @@ public class Tokenizer {
       "([+-])?\\d+(\\.\\d+)?(e([+-])?\\d+)?"
   );
 
-  private Map<String, MathOperation> mathOperationMap;
+  private CheapMultiMap<String, MathOperation> mathOperationMap;
 
   /**
    * Creates a new {@link Tokenizer} with the default {@link MathOperation}s.
@@ -32,7 +31,7 @@ public class Tokenizer {
    * @see #addDefaultMathOperations()
    */
   public Tokenizer() {
-    this.mathOperationMap = new HashMap<>();
+    this.mathOperationMap = new CheapMultiMap<>();
     addDefaultMathOperations();
   }
 
@@ -42,7 +41,7 @@ public class Tokenizer {
    * @param operation The {@link MathOperation} to add
    */
   public void addMathOperation(MathOperation operation) {
-    mathOperationMap.put(operation.getKeyword(), operation);
+    mathOperationMap.putSingle(operation.getKeyword(), operation);
   }
 
   /**
@@ -81,7 +80,7 @@ public class Tokenizer {
       switch (nextTokenType) {
         case FUNCTION:
         case OPERATOR:
-          Optional<MathOperation> operationOptional = readMathOperation(currentString);
+          Optional<MathOperation> operationOptional = readMathOperation(currentString, tokens);
           if (!operationOptional.isPresent()) {
             throw new IllegalArgumentException(
                 "Error parsing an operator/function '" + currentString + "'. Probably not known?"
@@ -120,6 +119,8 @@ public class Tokenizer {
       );
       tokens.add(token);
     }
+
+    tokens.forEach(System.out::println);
 
     return tokens;
   }
@@ -165,17 +166,65 @@ public class Tokenizer {
    * @param input The input String
    * @return The Operator, if any
    */
-  private Optional<MathOperation> readMathOperation(String input) {
+  private Optional<MathOperation> readMathOperation(String input, List<Token> previousTokens) {
     MathOperation foundOne = null;
     for (int i = 1; i <= input.length(); i++) {
       String part = input.substring(0, i);
       if (mathOperationMap.containsKey(part)) {
-        foundOne = mathOperationMap.get(part);
+        boolean useUnary;
+        if (previousTokens.isEmpty()) {
+          useUnary = true;
+        } else {
+          Token lastToken = previousTokens.get(previousTokens.size() - 1);
+          useUnary = lastToken.getTokenText().equals("(")
+              || lastToken.getType() == TokenType.OPERATOR;
+        }
+        if (useUnary) {
+          foundOne = getUnary(part).orElseThrow(() -> new IllegalArgumentException(String.format(
+              "Wanted an unary operator for keyword '%s', found none. Full: '%s'",
+              part, input
+          )));
+        } else {
+          foundOne = getBinary(part).orElseThrow(() -> new IllegalArgumentException(String.format(
+              "Wanted a binary operator for keyword '%s', found none. Full: '%s'",
+              part, input
+          )));
+        }
       } else if (foundOne != null) {
         // we found one before ==> probably read too much
         return Optional.of(foundOne);
       }
     }
     return Optional.empty();
+  }
+
+  /**
+   * @param key The keyword for the operator
+   * @return The Operator's unary variant, if any
+   */
+  private Optional<Operator> getUnary(String key) {
+    if (!mathOperationMap.containsKey(key)) {
+      return Optional.empty();
+    }
+    return mathOperationMap.get(key).stream()
+        .filter(mathOperation -> mathOperation instanceof Operator)
+        .map(mathOperation -> (Operator) mathOperation)
+        .filter(Operator::isUnary)
+        .findFirst();
+  }
+
+  /**
+   * @param key The keyword for the operator
+   * @return The Operator's binary variant, if any
+   */
+  private Optional<Operator> getBinary(String key) {
+    if (!mathOperationMap.containsKey(key)) {
+      return Optional.empty();
+    }
+    return mathOperationMap.get(key).stream()
+        .filter(mathOperation -> mathOperation instanceof Operator)
+        .map(mathOperation -> (Operator) mathOperation)
+        .filter(operator -> !operator.isUnary())
+        .findFirst();
   }
 }

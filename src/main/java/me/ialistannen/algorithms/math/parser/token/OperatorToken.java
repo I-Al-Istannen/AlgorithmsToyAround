@@ -1,5 +1,7 @@
 package me.ialistannen.algorithms.math.parser.token;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import me.ialistannen.algorithms.math.parser.mathoperations.Operator;
 import me.ialistannen.treeviewer.Tree;
@@ -29,7 +31,11 @@ public class OperatorToken extends BaseToken {
 
   @Override
   public double evaluate(Tree node) {
-    return 0;
+    List<Double> childResults = new ArrayList<>();
+    for (Tree tree : node.getChildren()) {
+      childResults.add(tree.evaluate());
+    }
+    return getOperator().evaluate(childResults);
   }
 
   @Override
