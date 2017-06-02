@@ -1,5 +1,6 @@
 package me.ialistannen.algorithms.math.parser.mathoperations.impl;
 
+import java.util.List;
 import me.ialistannen.algorithms.math.parser.mathoperations.Function;
 
 /**
@@ -21,6 +22,11 @@ public enum BaseFunction implements Function {
   BaseFunction(int argumentCount, String keyword) {
     this.argumentCount = argumentCount;
     this.keyword = keyword;
+  }
+
+  @Override
+  public double evaluate(List<Double> values) {
+    return 0;
   }
 
   @Override
