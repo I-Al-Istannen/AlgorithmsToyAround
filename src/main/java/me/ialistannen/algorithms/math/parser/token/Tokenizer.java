@@ -3,7 +3,9 @@ package me.ialistannen.algorithms.math.parser.token;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +14,8 @@ import me.ialistannen.algorithms.math.parser.mathoperations.MathOperation;
 import me.ialistannen.algorithms.math.parser.mathoperations.Operator;
 import me.ialistannen.algorithms.math.parser.mathoperations.impl.BaseFunction;
 import me.ialistannen.algorithms.math.parser.mathoperations.impl.BaseOperator;
+import me.ialistannen.algorithms.math.parser.variables.Variable;
+import me.ialistannen.algorithms.math.parser.variables.impl.BaseVariables;
 import me.ialistannen.collections.CheapMultiMap;
 
 /**
@@ -24,6 +28,7 @@ public class Tokenizer {
   );
 
   private CheapMultiMap<String, MathOperation> mathOperationMap;
+  private Map<String, Variable> variableMap;
 
   /**
    * Creates a new {@link Tokenizer} with the default {@link MathOperation}s.
@@ -32,7 +37,10 @@ public class Tokenizer {
    */
   public Tokenizer() {
     this.mathOperationMap = new CheapMultiMap<>();
+    this.variableMap = new HashMap<>();
+
     addDefaultMathOperations();
+    addDefaultVariables();
   }
 
   /**
@@ -59,9 +67,36 @@ public class Tokenizer {
    *
    * <p>Contains {@link BaseFunction} and {@link BaseOperator}.
    */
-  public void addDefaultMathOperations() {
+  private void addDefaultMathOperations() {
     addAllMathOperations(Arrays.asList(BaseFunction.values()));
     addAllMathOperations(Arrays.asList(BaseOperator.values()));
+  }
+
+  /**
+   * Adds the default {@link Variable}s.
+   *
+   * <p>Contains {@link BaseVariables}.
+   */
+  private void addDefaultVariables() {
+    addAllVariables(Arrays.asList(BaseVariables.values()));
+  }
+
+  /**
+   * @param variables The {@link Variable}s to add
+   */
+  private void addAllVariables(Iterable<Variable> variables) {
+    variables.forEach(this::addVariable);
+  }
+
+  /**
+   * @param variable The {@link Variable} to add
+   * @throws IllegalStateException if a function with this name is already registered.
+   */
+  public void addVariable(Variable variable) {
+    if (mathOperationMap.containsKey(variable.getKeyword())) {
+      throw new IllegalStateException("A function or operator with that name already exists.");
+    }
+    variableMap.put(variable.getKeyword(), variable);
   }
 
   /**
@@ -78,6 +113,13 @@ public class Tokenizer {
     while ((nextTokenType = getNextTokenType(currentString)) != TokenType.END_OF_FILE) {
       Token token;
       switch (nextTokenType) {
+        case VARIABLE:
+          Optional<Variable> variable = readVariable(currentString);
+          if (!variable.isPresent()) {
+            throw new IllegalArgumentException("Variable not found: '" + currentString + "'");
+          }
+          token = new VariableToken(variable.get().getKeyword(), variable.get());
+          break;
         case FUNCTION:
         case OPERATOR:
           Optional<MathOperation> operationOptional = readMathOperation(currentString, tokens);
@@ -123,6 +165,41 @@ public class Tokenizer {
     return tokens;
   }
 
+  private TokenType getNextTokenType(String input) {
+    if (input == null || input.isEmpty()) {
+      return TokenType.END_OF_FILE;
+    }
+    if (input.startsWith("(") || input.startsWith(")")) {
+      return TokenType.PARENTHESIS;
+    }
+    if (input.startsWith(Function.separator())) {
+      return TokenType.FUNCTION_SEPARATOR;
+    }
+    if (Character.isDigit(input.charAt(0))) {
+      return TokenType.NUMBER;
+    }
+
+    // try to find a functions
+    for (int i = 1; i <= input.length(); i++) {
+      String part = input.substring(0, i);
+      if (mathOperationMap.containsKey(part)) {
+        return TokenType.OPERATOR; // OPERATOR and FUNCTION are treated the same
+      }
+    }
+
+    // try to find a variable
+    for (int i = 1; i <= input.length(); i++) {
+      String part = input.substring(0, i);
+      if (variableMap.containsKey(part)) {
+        return TokenType.VARIABLE;
+      }
+    }
+
+    throw new IllegalArgumentException(
+        "Error parsing a symbol '" + input + "'. Probably not known?"
+    );
+  }
+
   private Optional<ValueToken> readNumber(String currentString) {
     if (currentString == null || currentString.isEmpty()) {
       return Optional.empty();
@@ -141,23 +218,6 @@ public class Tokenizer {
     } catch (NumberFormatException e) {
       return Optional.empty();
     }
-  }
-
-
-  private TokenType getNextTokenType(String input) {
-    if (input == null || input.isEmpty()) {
-      return TokenType.END_OF_FILE;
-    }
-    if (input.startsWith("(") || input.startsWith(")")) {
-      return TokenType.PARENTHESIS;
-    }
-    if (input.startsWith(Function.separator())) {
-      return TokenType.FUNCTION_SEPARATOR;
-    }
-    if (Character.isDigit(input.charAt(0))) {
-      return TokenType.NUMBER;
-    }
-    return TokenType.OPERATOR;
   }
 
   /**
@@ -239,4 +299,19 @@ public class Tokenizer {
         .filter(operator -> !operator.isUnary())
         .findFirst();
   }
+
+  /**
+   * @param input The input String
+   * @return The Operator, if any
+   */
+  private Optional<Variable> readVariable(String input) {
+    for (int i = 1; i <= input.length(); i++) {
+      String part = input.substring(0, i);
+      if (variableMap.containsKey(part)) {
+        return Optional.of(variableMap.get(part));
+      }
+    }
+    return Optional.empty();
+  }
+
 }

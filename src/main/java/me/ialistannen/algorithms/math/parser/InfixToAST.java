@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Queue;
 import me.ialistannen.algorithms.math.parser.ast.Node;
 import me.ialistannen.algorithms.math.parser.mathoperations.Function;
+import me.ialistannen.algorithms.math.parser.mathoperations.MathOperation;
 import me.ialistannen.algorithms.math.parser.mathoperations.Operator;
 import me.ialistannen.algorithms.math.parser.token.FunctionToken;
 import me.ialistannen.algorithms.math.parser.token.OperatorToken;
@@ -15,6 +16,9 @@ import me.ialistannen.algorithms.math.parser.token.Token;
 import me.ialistannen.algorithms.math.parser.token.TokenType;
 import me.ialistannen.algorithms.math.parser.token.Tokenizer;
 import me.ialistannen.algorithms.math.parser.token.ValueToken;
+import me.ialistannen.algorithms.math.parser.token.VariableToken;
+import me.ialistannen.algorithms.math.parser.variables.Variable;
+import me.ialistannen.treeviewer.Tree;
 
 /**
  * Converts an infix String to an AST.
@@ -32,7 +36,47 @@ public class InfixToAST {
     this.tokenizer = new Tokenizer();
   }
 
-  public Node generateAst(String input) {
+  /**
+   * @param variable The {@link Variable} to add
+   */
+  public void addVariable(Variable variable) {
+    tokenizer.addVariable(variable);
+  }
+
+  /**
+   * Adds all passed {@link Variable}s.
+   *
+   * @param variables The {@link Variable} to add
+   * @see #addVariable(Variable)
+   */
+  public void addAllVariables(Iterable<Variable> variables) {
+    variables.forEach(this::addVariable);
+  }
+
+  /**
+   * @param operation The {@link MathOperation} to add
+   */
+  public void addMathOperation(MathOperation operation) {
+    tokenizer.addMathOperation(operation);
+  }
+
+  /**
+   * Registers all passed {@link MathOperation}s.
+   *
+   * @param operation The {@link MathOperation}s to add
+   * @see #addMathOperation(MathOperation)
+   */
+  public void addAllMathOperations(Iterable<MathOperation> operation) {
+    operation.forEach(this::addMathOperation);
+  }
+
+  /**
+   * Converts an expression to a tree.
+   *
+   * @param input The input expression
+   * @return The resulting tree!
+   */
+  public Tree generateAst(String input) {
     resetState();
 
     Queue<Token> tokens = new ArrayDeque<>(tokenizer.tokenize(input));
@@ -41,6 +85,7 @@ public class InfixToAST {
       Token token = tokens.poll();
 
       switch (token.getType()) {
+        case VARIABLE:
         case NUMBER:
           addNodeToOutput(token);
           break;
@@ -141,6 +186,10 @@ public class InfixToAST {
 
   private void addNodeToOutput(Token token) {
     if (token instanceof ValueToken) {
+      outputStack.addFirst(new Node(token));
+      return;
+    }
+    if (token instanceof VariableToken) {
       outputStack.addFirst(new Node(token));
       return;
     }

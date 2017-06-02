@@ -9,5 +9,6 @@ public enum TokenType {
   FUNCTION,
   PARENTHESIS,
   FUNCTION_SEPARATOR,
+  VARIABLE,
   END_OF_FILE
 }

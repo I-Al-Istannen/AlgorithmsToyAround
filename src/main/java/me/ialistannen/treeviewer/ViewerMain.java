@@ -8,10 +8,8 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import me.ialistannen.algorithms.math.parser.InfixToAST;
-import me.ialistannen.algorithms.math.parser.ast.Node;
 import me.ialistannen.algorithms.math.parser.token.Token;
 import me.ialistannen.treeviewer.view.TreeComponent;
 import org.abego.treelayout.NodeExtentProvider;
@@ -38,7 +36,7 @@ public class ViewerMain extends Application {
     }
 
     System.out.println("Input:\n" + input);
-    Node ast = infixToPostfixString.generateAst(input);
+    Tree ast = infixToPostfixString.generateAst(input);
     System.out.println("\nOutput:\n" + ast);
     ast.getChildrenLevels().forEach((integer, trees) -> {
       String collect = trees.stream()
