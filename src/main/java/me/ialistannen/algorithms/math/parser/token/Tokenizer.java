@@ -171,24 +171,10 @@ public class Tokenizer {
     for (int i = 1; i <= input.length(); i++) {
       String part = input.substring(0, i);
       if (mathOperationMap.containsKey(part)) {
-        boolean useUnary;
-        if (previousTokens.isEmpty()) {
-          useUnary = true;
+        if (hasOperatorForKeyword(part)) {
+          foundOne = getMathOperator(part, input, previousTokens);
         } else {
-          Token lastToken = previousTokens.get(previousTokens.size() - 1);
-          useUnary = lastToken.getTokenText().equals("(")
-              || lastToken.getType() == TokenType.OPERATOR;
-        }
-        if (useUnary) {
-          foundOne = getUnary(part).orElseThrow(() -> new IllegalArgumentException(String.format(
-              "Wanted an unary operator for keyword '%s', found none. Full: '%s'",
-              part, input
-          )));
-        } else {
-          foundOne = getBinary(part).orElseThrow(() -> new IllegalArgumentException(String.format(
-              "Wanted a binary operator for keyword '%s', found none. Full: '%s'",
-              part, input
-          )));
+          foundOne = mathOperationMap.get(part).get(0);
         }
       } else if (foundOne != null) {
         // we found one before ==> probably read too much
@@ -196,6 +182,34 @@ public class Tokenizer {
       }
     }
     return Optional.empty();
+  }
+
+  private boolean hasOperatorForKeyword(String keyword) {
+    return mathOperationMap.containsKey(keyword)
+        && mathOperationMap.get(keyword).stream()
+        .anyMatch(operation -> operation instanceof Operator);
+  }
+
+  private Operator getMathOperator(String keyword, String fullExpression, List<Token> previous) {
+    boolean useUnary;
+    if (previous.isEmpty()) {
+      useUnary = true;
+    } else {
+      Token lastToken = previous.get(previous.size() - 1);
+      useUnary = lastToken.getTokenText().equals("(")
+          || lastToken.getType() == TokenType.OPERATOR;
+    }
+    if (useUnary) {
+      return getUnary(keyword).orElseThrow(() -> new IllegalArgumentException(String.format(
+          "Wanted an unary operator for keyword '%s', found none. Full: '%s'",
+          keyword, fullExpression
+      )));
+    } else {
+      return getBinary(keyword).orElseThrow(() -> new IllegalArgumentException(String.format(
+          "Wanted a binary operator for keyword '%s', found none. Full: '%s'",
+          keyword, fullExpression
+      )));
+    }
   }
 
   /**

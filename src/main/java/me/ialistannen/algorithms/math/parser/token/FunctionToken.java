@@ -29,7 +29,7 @@ public class FunctionToken extends BaseToken {
 
   @Override
   public double evaluate(Tree node) {
-    return 0;
+    return getFunction().evaluate(getChildrenValues(node));
   }
 
   @Override
