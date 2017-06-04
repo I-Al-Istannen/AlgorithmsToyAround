@@ -10,13 +10,17 @@ import me.ialistannen.algorithms.math.parser.mathoperations.Operator;
  * Contains several basic {@link Operator}s.
  */
 public enum BaseOperator implements Operator {
-  ADD(0, Associativity.LEFT, "+", (o1, o2) -> o1 + o2),
   UNARY_PLUS(4, Associativity.RIGHT, "+", true, doubles -> doubles.get(0)),
-  SUBTRACT(0, Associativity.LEFT, "-", (o1, o2) -> o1 - o2),
   UNARY_MINUS(4, Associativity.RIGHT, "-", true, doubles -> -1 * doubles.get(0)),
+
+  POWER(2, Associativity.RIGHT, "^", Math::pow),
+
   MULTIPLY(1, Associativity.LEFT, "*", (o1, o2) -> o1 * o2),
   DIVIDE(1, Associativity.LEFT, "/", (o1, o2) -> o1 / o2),
-  POWER(2, Associativity.RIGHT, "^", Math::pow);
+  MODULO(1, Associativity.LEFT, "%", (o1, o2) -> o1 % o2),
+
+  ADD(0, Associativity.LEFT, "+", (o1, o2) -> o1 + o2),
+  SUBTRACT(0, Associativity.LEFT, "-", (o1, o2) -> o1 - o2);
 
   private int precedence;
   private Associativity associativity;

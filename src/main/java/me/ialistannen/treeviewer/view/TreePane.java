@@ -38,12 +38,12 @@ public class TreePane extends ScrollPane {
     NodeExtentProvider<Tree> nodeExtentProvider = new NodeExtentProvider<Tree>() {
       @Override
       public double getWidth(Tree tree) {
-        return 50;
+        return 70;
       }
 
       @Override
       public double getHeight(Tree tree) {
-        return 50;
+        return 70;
       }
     };
 

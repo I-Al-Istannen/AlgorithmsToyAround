@@ -12,7 +12,29 @@ public enum BaseFunction implements me.ialistannen.algorithms.math.parser.mathop
   SINUS(1, "sin", getOperator(Math::sin)),
   COSINUS(1, "cos", getOperator(Math::cos)),
   TANGENS(1, "tan", getOperator(Math::tan)),
+  ARC_SIN(1, "asin", getOperator(Math::asin)),
+  ARC_COS(1, "acos", getOperator(Math::acos)),
+  ARC_TAN(1, "atan", getOperator(Math::atan)),
+  ARC_TAN_2(1, "atan2", getOperator(Math::atan2)),
+  TO_DEGREES(1, "to_degree", getOperator(Math::toDegrees)),
+  TO_RADIANS(1, "to_radian", getOperator(Math::toRadians)),
+
+  MIN(2, "min", getOperator(Math::min)),
   MAX(2, "max", getOperator(Math::max)),
+
+  // because otherwise javac things that is ambiguous
+  ABSOLUTE(1, "abs", getOperator(x -> Math.abs(x))),
+  // because otherwise javac things that is ambiguous
+  SIGNUM(1, "signum", getOperator(x -> Math.signum(x))),
+
+  EXP(1, "exp", getOperator(Math::exp)),
+  LOG(1, "log", getOperator(Math::log10)),
+  LN(1, "ln", getOperator(Math::log)),
+
+  FLOOR(1, "floor", getOperator(Math::floor)),
+  CEIL(1, "ceil", getOperator(Math::ceil)),
+  ROUND(1, "round", getOperator(x -> (double) Math.round(x))),
+
   SUM(1, Integer.MAX_VALUE, "sum", args -> args.stream().mapToDouble(Double::doubleValue).sum());
 
   private int minArgumentCount;
