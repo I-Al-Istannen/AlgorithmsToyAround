@@ -1,6 +1,6 @@
 package me.ialistannen.algorithms.math.parser.token;
 
-import me.ialistannen.treeviewer.Tree;
+import me.ialistannen.treeviewer.model.Tree;
 
 /**
  * A token that simply holds some text (e.g. Like parentheses)

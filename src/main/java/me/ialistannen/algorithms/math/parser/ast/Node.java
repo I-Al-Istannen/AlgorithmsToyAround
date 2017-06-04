@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import me.ialistannen.algorithms.math.parser.token.Token;
-import me.ialistannen.treeviewer.Tree;
+import me.ialistannen.treeviewer.model.Tree;
 
 /**
  * A node containing a {@link Token}.

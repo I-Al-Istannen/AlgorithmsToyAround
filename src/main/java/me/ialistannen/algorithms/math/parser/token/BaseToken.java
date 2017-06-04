@@ -2,7 +2,7 @@ package me.ialistannen.algorithms.math.parser.token;
 
 import java.util.ArrayList;
 import java.util.List;
-import me.ialistannen.treeviewer.Tree;
+import me.ialistannen.treeviewer.model.Tree;
 
 /**
  * A skeleton {@link Token}.

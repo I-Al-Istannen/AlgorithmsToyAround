@@ -1,4 +1,4 @@
-package me.ialistannen.treeviewer;
+package me.ialistannen.treeviewer.model;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

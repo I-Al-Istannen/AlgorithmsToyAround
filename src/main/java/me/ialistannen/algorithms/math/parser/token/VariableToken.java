@@ -1,7 +1,7 @@
 package me.ialistannen.algorithms.math.parser.token;
 
 import me.ialistannen.algorithms.math.parser.variables.Variable;
-import me.ialistannen.treeviewer.Tree;
+import me.ialistannen.treeviewer.model.Tree;
 
 /**
  * A Token for a {@link Variable}

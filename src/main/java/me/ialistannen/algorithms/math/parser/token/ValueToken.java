@@ -1,7 +1,7 @@
 package me.ialistannen.algorithms.math.parser.token;
 
 import java.util.Objects;
-import me.ialistannen.treeviewer.Tree;
+import me.ialistannen.treeviewer.model.Tree;
 
 /**
  * A {@link Token} storing a concrete value.

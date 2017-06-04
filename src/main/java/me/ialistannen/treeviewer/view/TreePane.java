@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
-import me.ialistannen.treeviewer.Tree;
+import me.ialistannen.treeviewer.model.Tree;
 import org.abego.treelayout.NodeExtentProvider;
 import org.abego.treelayout.TreeLayout;
 import org.abego.treelayout.util.AbstractTreeForTreeLayout;

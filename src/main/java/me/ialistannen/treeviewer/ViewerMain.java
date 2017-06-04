@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import me.ialistannen.algorithms.math.parser.InfixToAST;
+import me.ialistannen.treeviewer.model.Tree;
 import me.ialistannen.treeviewer.view.TreePane;
 
 public class ViewerMain extends Application {

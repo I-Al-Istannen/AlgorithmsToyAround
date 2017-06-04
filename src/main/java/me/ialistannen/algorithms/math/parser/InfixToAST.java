@@ -18,7 +18,7 @@ import me.ialistannen.algorithms.math.parser.token.Tokenizer;
 import me.ialistannen.algorithms.math.parser.token.ValueToken;
 import me.ialistannen.algorithms.math.parser.token.VariableToken;
 import me.ialistannen.algorithms.math.parser.variables.Variable;
-import me.ialistannen.treeviewer.Tree;
+import me.ialistannen.treeviewer.model.Tree;
 
 /**
  * Converts an infix String to an AST.
