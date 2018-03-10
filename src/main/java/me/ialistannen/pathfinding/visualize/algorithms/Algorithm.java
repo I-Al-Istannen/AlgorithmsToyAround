@@ -1,6 +1,5 @@
 package me.ialistannen.pathfinding.visualize.algorithms;
 
-import me.ialistannen.pathfinding.visualize.grid.DisplayedGrid;
 import me.ialistannen.pathfinding.visualize.grid.GridCellState;
 
 public interface Algorithm<T extends GridCellState> {
@@ -11,6 +10,6 @@ public interface Algorithm<T extends GridCellState> {
    * @param grid the grid to apply it to
    * @return the computed result
    */
-  AlgorithmResult compute(DisplayedGrid<T> grid);
+  AlgorithmResult<T> compute(AlgorithmGrid<T> grid);
 
 }

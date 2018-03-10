@@ -19,6 +19,7 @@ public enum DefaultGridState implements GridCellState {
   EXAMINED(() -> getColoredNode(Color.web("#afeeee"))),
   START(true, false, () -> getColoredNode(Color.web("#00dd00"))),
   END(false, true, () -> getColoredNode(Color.web("#ee4400"))),
+  SOLUTION(() -> getColoredNode(Color.ROYALBLUE)),
   OTHER(() -> getColoredNode(Color.web("#e5e5e5")));
 
   private Supplier<Node> factory;

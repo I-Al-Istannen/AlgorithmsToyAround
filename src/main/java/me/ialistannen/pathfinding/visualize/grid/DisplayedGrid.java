@@ -14,27 +14,26 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 
 public class DisplayedGrid<T extends GridCellState> extends GridPane {
 
-  private int columns;
-  private int rows;
-
-  private Map<GridCoordinate, T> cellValues;
   private ClickListener<T> clickListener;
+  private AlgorithmGrid<T> grid;
+
+  private Map<GridCoordinate, Node> nodeMap;
 
   private Set<GridCoordinate> visitedCoordinatesInDrag;
 
-  public DisplayedGrid(int columns, int rows) {
-    this.columns = columns;
-    this.rows = rows;
+  public DisplayedGrid(AlgorithmGrid<T> grid) {
+    this.grid = grid;
 
-    setGridLinesVisible(true);
+    this.nodeMap = new HashMap<>();
+    this.visitedCoordinatesInDrag = new HashSet<>();
 
-    cellValues = new HashMap<>();
-    visitedCoordinatesInDrag = new HashSet<>();
+    initializeGrid(grid.getWidth(), grid.getHeight());
 
-    initializeGrid(columns, rows);
+    grid.setChangeCallback((coordinate, oldState, newState) -> setCellState(coordinate, newState));
   }
 
   private void initializeGrid(int columns, int rows) {
@@ -62,14 +61,6 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
     getColumnConstraints().setAll(columnConstraints);
   }
 
-  public int getColumns() {
-    return columns;
-  }
-
-  public int getRows() {
-    return rows;
-  }
-
   public void setClickListener(ClickListener<T> clickListener) {
     this.clickListener = clickListener;
 
@@ -79,35 +70,34 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
     }
   }
 
+  public Node getNodeAt(GridCoordinate coordinate) {
+    return nodeMap.get(coordinate);
+  }
+
   /**
    * Adds a cell to this grid.
    *
-   * @param column the column to add it at
-   * @param row the row to add it at
+   * @param coordinate the coordinate to change
    * @param state the state to add
    * @return the node created by {@link GridCellState#getNode()}
    */
-  public Node setCellState(int column, int row, T state) {
+  private Node setCellState(GridCoordinate coordinate, T state) {
     Node node = state.getNode();
 
     node.setOnMouseClicked(this::handleChildMouseEvent);
     addDragListener(node);
 
-    GridCoordinate coordinate = new GridCoordinate(column, row);
+    getChildren().removeIf(child -> {
+      Integer rowIndex = getRowIndex(child);
+      Integer columnIndex = getColumnIndex(child);
 
-    if (cellValues.containsKey(coordinate)) {
-      getChildren().removeIf(child -> {
-        Integer rowIndex = getRowIndex(child);
-        Integer columnIndex = getColumnIndex(child);
+      return rowIndex != null && columnIndex != null
+          && columnIndex == coordinate.getColumn() && rowIndex == coordinate.getRow();
+    });
 
-        return rowIndex != null && columnIndex != null
-            && rowIndex == row && columnIndex == column;
-      });
-    }
+    add(node, coordinate.getColumn(), coordinate.getRow());
 
-    add(node, column, row);
-
-    cellValues.put(coordinate, state);
+    nodeMap.put(coordinate, node);
 
     return node;
   }
@@ -123,9 +113,9 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
       return;
     }
 
-    T cellState = getCellState(coordinate.getColumn(), coordinate.getRow());
+    T cellState = grid.getStateAt(coordinate);
 
-    clickListener.onClick(coordinate.getColumn(), coordinate.getRow(), cellState, clicked);
+    clickListener.onClick(coordinate, cellState, clicked);
   }
 
   private GridCoordinate getGridCoordinateForChild(Node child) {
@@ -162,27 +152,15 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
     });
   }
 
-  /**
-   * Returns the state at the given cell.
-   *
-   * @param column the column to add it at
-   * @param row the row to add it at
-   * @return the state
-   */
-  public T getCellState(int column, int row) {
-    return cellValues.get(new GridCoordinate(column, row));
-  }
-
-  public interface ClickListener<T> {
+  public interface ClickListener<T extends GridCellState> {
 
     /**
      * Called when a cell in the grid is clicked.
      *
-     * @param column the column that was clicked
-     * @param row the row that was clicked
+     * @param coordinate the coordinate that was clicked
      * @param state the state the cell is currently in
      * @param clickedNode the node that was clicked
      */
-    void onClick(int column, int row, T state, Node clickedNode);
+    void onClick(GridCoordinate coordinate, T state, Node clickedNode);
   }
 }

@@ -14,6 +14,8 @@ public class AlgorithmGrid<T extends GridCellState> {
   private GridCoordinate endState;
   private Set<GridCoordinate> startStates;
 
+  private ChangeCallback<T> changeCallback;
+
   private int width;
   private int height;
 
@@ -26,12 +28,21 @@ public class AlgorithmGrid<T extends GridCellState> {
     this.startStates = new HashSet<>();
   }
 
+  public void setChangeCallback(ChangeCallback<T> changeCallback) {
+    this.changeCallback = changeCallback;
+  }
+
   public int getWidth() {
     return width;
   }
 
   public int getHeight() {
     return height;
+  }
+
+  public boolean isOutside(GridCoordinate coordinate) {
+    return coordinate.getColumn() >= getWidth() || coordinate.getRow() >= getHeight()
+        || coordinate.getColumn() < 0 || coordinate.getRow() < 0;
   }
 
   /**
@@ -64,9 +75,15 @@ public class AlgorithmGrid<T extends GridCellState> {
   public void setStateAt(GridCoordinate coordinate, T state) {
     handleStateRemoval(coordinate);
 
+    T oldState = getStateAt(coordinate);
+
     values.put(coordinate, state);
 
     handleStateAddition(coordinate, state);
+
+    if (changeCallback != null) {
+      changeCallback.onStateChanged(coordinate, oldState, state);
+    }
   }
 
   /**
@@ -96,6 +113,9 @@ public class AlgorithmGrid<T extends GridCellState> {
 
   private void handleStateAddition(GridCoordinate coordinate, T state) {
     if (state.isEnd()) {
+      if (endState != null) {
+        setStateAt(endState, defaultState);
+      }
       endState = coordinate;
     }
 
@@ -120,5 +140,17 @@ public class AlgorithmGrid<T extends GridCellState> {
    */
   public GridCoordinate getEnd() {
     return endState;
+  }
+
+  public interface ChangeCallback<T> {
+
+    /**
+     * Called when a state was changed.
+     *
+     * @param coordinate the coordinate that was changed
+     * @param oldState the old state
+     * @param newState the new state
+     */
+    void onStateChanged(GridCoordinate coordinate, T oldState, T newState);
   }
 }

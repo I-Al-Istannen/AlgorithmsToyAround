@@ -3,14 +3,15 @@ package me.ialistannen.pathfinding.visualize.algorithms;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import me.ialistannen.pathfinding.visualize.grid.GridCellState;
 import me.ialistannen.pathfinding.visualize.grid.StatefulGridCoordinate;
 
-public class AlgorithmResult {
+public class AlgorithmResult<T extends GridCellState> {
 
   private boolean successful;
-  private List<List<StatefulGridCoordinate<?>>> steps;
+  private List<StatefulGridCoordinate<T>> steps;
 
-  public AlgorithmResult(boolean successful, List<List<StatefulGridCoordinate<?>>> steps) {
+  public AlgorithmResult(boolean successful, List<StatefulGridCoordinate<T>> steps) {
     this.successful = successful;
     this.steps = new ArrayList<>(steps);
   }
@@ -19,7 +20,7 @@ public class AlgorithmResult {
     return successful;
   }
 
-  public List<List<StatefulGridCoordinate<?>>> getSteps() {
+  public List<StatefulGridCoordinate<T>> getSteps() {
     return Collections.unmodifiableList(steps);
   }
 }
