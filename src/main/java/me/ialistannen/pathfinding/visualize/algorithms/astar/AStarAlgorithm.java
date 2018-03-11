@@ -1,6 +1,7 @@
 package me.ialistannen.pathfinding.visualize.algorithms.astar;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 import me.ialistannen.pathfinding.visualize.algorithms.BaseNode;
@@ -16,7 +17,8 @@ public class AStarAlgorithm extends DijkstraBaseAlgorithm<AStarNode> {
 
   private DistanceFunction distanceFunction;
 
-  public AStarAlgorithm(DistanceFunction distanceFunction) {
+  public AStarAlgorithm(DistanceFunction distanceFunction, List<Direction> directions) {
+    super(directions);
     this.distanceFunction = distanceFunction;
   }
 

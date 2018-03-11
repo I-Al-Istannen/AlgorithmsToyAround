@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import me.ialistannen.pathfinding.visualize.grid.GridCellState;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate;
 
@@ -31,6 +32,10 @@ public class AlgorithmGrid<T extends GridCellState> {
 
   public void setChangeCallback(ChangeCallback<T> changeCallback) {
     this.changeCallback = changeCallback;
+  }
+
+  public T getDefaultState() {
+    return defaultState;
   }
 
   public int getWidth() {
@@ -99,6 +104,22 @@ public class AlgorithmGrid<T extends GridCellState> {
    */
   public void setStateAt(int column, int row, T state) {
     setStateAt(new GridCoordinate(column, row), state);
+  }
+
+  /**
+   * Replaces all states that match the predicate with the passed one.
+   *
+   * @param replacement the replacement state
+   * @param filter the filter
+   */
+  public void replaceIf(T replacement, Predicate<T> filter) {
+    for (int column = 0; column < getWidth(); column++) {
+      for (int row = 0; row < getHeight(); row++) {
+        if (filter.test(getStateAt(column, row))) {
+          setStateAt(column, row, replacement);
+        }
+      }
+    }
   }
 
   private void handleStateRemoval(GridCoordinate coordinate) {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import me.ialistannen.pathfinding.visualize.outerui.controls.ControlPanel?>
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+  minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+  xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="me.ialistannen.pathfinding.visualize.outerui.main.MainScreenController">
+  <right>
+    <ControlPanel fx:id="controlPanel" BorderPane.alignment="CENTER"/>
+  </right>
+</BorderPane>

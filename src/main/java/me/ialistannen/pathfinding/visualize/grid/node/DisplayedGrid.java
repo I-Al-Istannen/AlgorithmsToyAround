@@ -23,6 +23,8 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
     initializeGrid(grid.getWidth(), grid.getHeight());
 
     grid.setChangeCallback((coordinate, oldState, newState) -> setCellState(coordinate, newState));
+
+    fillWithState(grid.getWidth(), grid.getHeight(), grid, grid.getDefaultState());
   }
 
   private void initializeGrid(int columns, int rows) {
@@ -48,6 +50,14 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
     }
 
     getColumnConstraints().setAll(columnConstraints);
+  }
+
+  private void fillWithState(int width, int height, AlgorithmGrid<T> grid, T state) {
+    for (int column = 0; column < width; column++) {
+      for (int row = 0; row < height; row++) {
+        grid.setStateAt(column, row, state);
+      }
+    }
   }
 
   /**

@@ -1,6 +1,7 @@
 package me.ialistannen.pathfinding.visualize.algorithms.dijkstra;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 import me.ialistannen.pathfinding.visualize.algorithms.BaseNode;
@@ -10,6 +11,10 @@ import me.ialistannen.pathfinding.visualize.grid.GridCoordinate;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate.Direction;
 
 public class DijkstraAlgorithm extends DijkstraBaseAlgorithm<DijkstraNode> {
+
+  public DijkstraAlgorithm(List<Direction> directions) {
+    super(directions);
+  }
 
   @Override
   protected Comparator<DijkstraNode> createOpenSetComparator() {

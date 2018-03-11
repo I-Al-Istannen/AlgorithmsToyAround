@@ -28,10 +28,13 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
   private AlgorithmGrid<DefaultGridState> grid;
   private List<Direction> directions;
 
+  public DijkstraBaseAlgorithm(List<Direction> directions) {
+    this.directions = directions;
+  }
+
   @Override
-  public AlgorithmResult<DefaultGridState> compute(AlgorithmGrid<DefaultGridState> grid,
-      List<Direction> directions) {
-    reset(grid, directions);
+  public AlgorithmResult<DefaultGridState> compute(AlgorithmGrid<DefaultGridState> grid) {
+    reset(grid);
 
     grid.getStarts().stream()
         .map(coordinate -> createStartNode(coordinate, grid))
@@ -55,13 +58,12 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
   /**
    * Resets this {@link Algorithm} to be able to search again.
    */
-  protected void reset(AlgorithmGrid<DefaultGridState> algorithmGrid, List<Direction> directions) {
+  protected void reset(AlgorithmGrid<DefaultGridState> algorithmGrid) {
     this.nodeCache = new HashMap<>();
     this.closedSet = new HashSet<>();
     this.steps = new ArrayList<>();
     this.openSet = new TreeSet<>(createOpenSetComparator());
     this.grid = Objects.requireNonNull(algorithmGrid, "algorithmGrid can not be null!");
-    this.directions = Objects.requireNonNull(directions, "directions can not be null!");
   }
 
   /**

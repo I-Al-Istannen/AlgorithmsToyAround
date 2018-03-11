@@ -60,9 +60,9 @@ public class TestMain extends Application {
           List<Direction> directions = Arrays
               .asList(Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST);
           Algorithm<DefaultGridState> algorithm = new AStarAlgorithm(
-              DefaultDistanceFunction.MANHATTEN);
+              DefaultDistanceFunction.MANHATTEN, directions);
           List<StatefulGridCoordinate<DefaultGridState>> steps = algorithm.compute(
-              algorithmGrid, directions
+              algorithmGrid
           )
               .getSteps();
           AtomicInteger counter = new AtomicInteger();
