@@ -18,12 +18,13 @@ import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 
 public class DisplayedGrid<T extends GridCellState> extends GridPane {
 
-  private ClickListener<T> clickListener;
+  private InteractionListener<T> interactionListener;
   private AlgorithmGrid<T> grid;
 
   private Map<GridCoordinate, Node> nodeMap;
 
   private Set<GridCoordinate> visitedCoordinatesInDrag;
+  private InteractionState<T> dragContext;
 
   public DisplayedGrid(AlgorithmGrid<T> grid) {
     this.grid = grid;
@@ -61,11 +62,11 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
     getColumnConstraints().setAll(columnConstraints);
   }
 
-  public void setClickListener(ClickListener<T> clickListener) {
-    this.clickListener = clickListener;
+  public void setInteractionListener(InteractionListener<T> interactionListener) {
+    this.interactionListener = interactionListener;
 
     for (Node node : getChildren()) {
-      node.setOnMouseClicked(this::handleChildMouseEvent);
+      node.setOnMouseClicked(this::handleClick);
       addDragListener(node);
     }
   }
@@ -84,7 +85,7 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
   private Node setCellState(GridCoordinate coordinate, T state) {
     Node node = state.getNode();
 
-    node.setOnMouseClicked(this::handleChildMouseEvent);
+    node.setOnMouseClicked(this::handleClick);
     addDragListener(node);
 
     getChildren().removeIf(child -> {
@@ -102,20 +103,27 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
     return node;
   }
 
-  private void handleChildMouseEvent(Event event) {
-    if (!(event.getSource() instanceof Node) || clickListener == null) {
+  private void handleClick(Event event) {
+    InteractionState<T> state = getStateFromEvent(event);
+
+    if (state == null) {
       return;
+    }
+
+    interactionListener.onClick(state);
+  }
+
+  private InteractionState<T> getStateFromEvent(Event event) {
+    if (!(event.getSource() instanceof Node) || interactionListener == null) {
+      return null;
     }
     Node clicked = (Node) event.getSource();
     GridCoordinate coordinate = getGridCoordinateForChild(clicked);
 
     if (coordinate == null) {
-      return;
+      return null;
     }
-
-    T cellState = grid.getStateAt(coordinate);
-
-    clickListener.onClick(coordinate, cellState, clicked);
+    return new InteractionState<>(coordinate, grid.getStateAt(coordinate), clicked, grid);
   }
 
   private GridCoordinate getGridCoordinateForChild(Node child) {
@@ -131,36 +139,119 @@ public class DisplayedGrid<T extends GridCellState> extends GridPane {
 
   private void addDragListener(Node child) {
     child.setOnDragEntered(event -> {
-      if (event.getGestureSource() == child) {
-        visitedCoordinatesInDrag.clear();
+      InteractionState<T> state = getStateFromEvent(event);
+
+      if (state == null || event.getGestureSource() == child || dragContext == null) {
+        return;
       }
 
       if (!visitedCoordinatesInDrag.add(getGridCoordinateForChild(child))) {
         return;
       }
 
-      handleChildMouseEvent(event);
+      interactionListener.onDragOver(state, dragContext);
 
       event.consume();
     });
     child.setOnDragDetected(event -> {
+      InteractionState<T> state = getStateFromEvent(event);
+
+      if (state == null) {
+        return;
+      }
+
+      visitedCoordinatesInDrag.clear();
+      dragContext = state;
+      interactionListener.onDragStart(state);
+
       Dragboard dragboard = child.startDragAndDrop(TransferMode.COPY_OR_MOVE);
       ClipboardContent content = new ClipboardContent();
-      content.putString("hey");
+      content.putString("sample_data");
       dragboard.setContent(content);
       event.consume();
     });
+    child.setOnDragOver(event -> {
+      if (event.getGestureSource() != child) {
+        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+      }
+    });
+    child.setOnDragDropped(event -> {
+      if (event.getGestureSource() == child) {
+        return;
+      }
+
+      InteractionState<T> state = getStateFromEvent(event);
+
+      if (state == null || dragContext == null) {
+        return;
+      }
+
+      interactionListener.onDragStop(state, dragContext);
+    });
   }
 
-  public interface ClickListener<T extends GridCellState> {
+  public interface InteractionListener<T extends GridCellState> {
 
     /**
      * Called when a cell in the grid is clicked.
      *
-     * @param coordinate the coordinate that was clicked
-     * @param state the state the cell is currently in
-     * @param clickedNode the node that was clicked
+     * @param state the state containing information about the event
      */
-    void onClick(GridCoordinate coordinate, T state, Node clickedNode);
+    void onClick(InteractionState<T> state);
+
+    /**
+     * Called when a node in a grid is being dragged.
+     *
+     * @param state the state containing information about the event
+     */
+    void onDragStart(InteractionState<T> state);
+
+    /**
+     * Called when a node is being dragged over.
+     *
+     * @param state the state containing information about the event
+     * @param dragState constains information about the drag origin
+     */
+    void onDragOver(InteractionState<T> state, InteractionState<T> dragState);
+
+    /**
+     * Called when the drag has ended.
+     *
+     * @param state the state containing information about the event
+     * @param dragState constains information about the drag origin
+     */
+    void onDragStop(InteractionState<T> state, InteractionState<T> dragState);
+  }
+
+  public static class InteractionState<T extends GridCellState> {
+
+    private GridCoordinate coordinate;
+    private T state;
+    private Node node;
+    private AlgorithmGrid<T> grid;
+
+    InteractionState(GridCoordinate coordinate, T state, Node node,
+        AlgorithmGrid<T> grid) {
+      this.coordinate = coordinate;
+      this.state = state;
+      this.node = node;
+      this.grid = grid;
+    }
+
+    public GridCoordinate getCoordinate() {
+      return coordinate;
+    }
+
+    public T getState() {
+      return state;
+    }
+
+    public Node getNode() {
+      return node;
+    }
+
+    public AlgorithmGrid<T> getGrid() {
+      return grid;
+    }
   }
 }

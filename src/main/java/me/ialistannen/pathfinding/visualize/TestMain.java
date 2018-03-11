@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
-import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -20,6 +18,8 @@ import me.ialistannen.pathfinding.visualize.algorithms.astar.AStarAlgorithm;
 import me.ialistannen.pathfinding.visualize.algorithms.distance.DefaultDistanceFunction;
 import me.ialistannen.pathfinding.visualize.grid.DefaultGridState;
 import me.ialistannen.pathfinding.visualize.grid.DisplayedGrid;
+import me.ialistannen.pathfinding.visualize.grid.DisplayedGrid.InteractionListener;
+import me.ialistannen.pathfinding.visualize.grid.DisplayedGrid.InteractionState;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate.Direction;
 import me.ialistannen.pathfinding.visualize.grid.StatefulGridCoordinate;
 
@@ -33,6 +33,7 @@ public class TestMain extends Application {
         DefaultGridState.EMPTY, columns, rows
     );
     DisplayedGrid<DefaultGridState> grid = new DisplayedGrid<>(algorithmGrid);
+    grid.setInteractionListener(new Listener());
 
     for (int i = 0; i < rows * columns; i++) {
       int column = i / columns;
@@ -42,21 +43,6 @@ public class TestMain extends Application {
 
     algorithmGrid.setStateAt(2, 2, DefaultGridState.START);
     algorithmGrid.setStateAt(2, 18, DefaultGridState.END);
-
-    grid.setClickListener((coordinate, state, ignored) -> {
-      algorithmGrid.setStateAt(
-          coordinate,
-          DefaultGridState.values()[(state.ordinal() + 1) % DefaultGridState.values().length]
-      );
-      Node node = grid.getNodeAt(coordinate);
-      ScaleTransition transition = new ScaleTransition(Duration.millis(200), node);
-      transition.setFromX(1.2f);
-      transition.setFromY(1.2f);
-      transition.setToX(1);
-      transition.setToY(1);
-
-      transition.play();
-    });
 
     grid.setPadding(new Insets(20));
 
@@ -120,5 +106,39 @@ public class TestMain extends Application {
 
   public static void main(String[] args) {
     launch(args);
+  }
+
+  private static class Listener implements InteractionListener<DefaultGridState> {
+
+    private boolean isJustPaintingWalls;
+
+    @Override
+    public void onClick(InteractionState<DefaultGridState> state) {
+      if (state.getState() == DefaultGridState.WALL) {
+        state.getGrid().setStateAt(state.getCoordinate(), DefaultGridState.EMPTY);
+      } else if (state.getState() == DefaultGridState.EMPTY) {
+        state.getGrid().setStateAt(state.getCoordinate(), DefaultGridState.WALL);
+      }
+    }
+
+    @Override
+    public void onDragStart(InteractionState<DefaultGridState> state) {
+      isJustPaintingWalls =
+          state.getState() == DefaultGridState.EMPTY || state.getState() == DefaultGridState.WALL;
+    }
+
+    @Override
+    public void onDragOver(InteractionState<DefaultGridState> state,
+        InteractionState<DefaultGridState> dragState) {
+
+      if (isJustPaintingWalls) {
+        onClick(state);
+      }
+    }
+
+    @Override
+    public void onDragStop(InteractionState<DefaultGridState> state,
+        InteractionState<DefaultGridState> dragState) {
+    }
   }
 }
