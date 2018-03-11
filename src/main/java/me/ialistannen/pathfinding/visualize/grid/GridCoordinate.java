@@ -21,7 +21,10 @@ public class GridCoordinate {
   }
 
   public GridCoordinate getNeighbour(Direction direction) {
-    return new GridCoordinate(getColumn() + direction.xMod, getRow() + direction.yMod);
+    return new GridCoordinate(
+        getColumn() + direction.getxMod(),
+        getRow() + direction.getyMod()
+    );
   }
 
   public double euclidianDistanceTo(GridCoordinate other) {
@@ -63,9 +66,9 @@ public class GridCoordinate {
   }
 
   public enum Direction {
-    NORTH(0, 1, 1), SOUTH(0, -1, 1), WEST(-1, 0, 1), EAST(1, 0, 1);
-//    NORTH_EAST(1, 1, Math.sqrt(2)), SOUTH_EAST(1, -1, Math.sqrt(2)),
-//    SOUTH_WEST(-1, -1, Math.sqrt(2)), NORTH_WEST(-1, 1, Math.sqrt(2));
+    NORTH(0, 1, 1), SOUTH(0, -1, 1), WEST(-1, 0, 1), EAST(1, 0, 1),
+    NORTH_EAST(1, 1, Math.sqrt(2)), SOUTH_EAST(1, -1, Math.sqrt(2)),
+    SOUTH_WEST(-1, -1, Math.sqrt(2)), NORTH_WEST(-1, 1, Math.sqrt(2));
 
     private int xMod;
     private int yMod;

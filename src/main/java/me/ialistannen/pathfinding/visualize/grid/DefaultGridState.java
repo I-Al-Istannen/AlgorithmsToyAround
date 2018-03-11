@@ -51,6 +51,10 @@ public enum DefaultGridState implements GridCellState {
     return isStart;
   }
 
+  @Override
+  public boolean isPassable() {
+    return this != WALL;
+  }
 
   private static Node getColoredNode(Paint color) {
     Region region = new Region();

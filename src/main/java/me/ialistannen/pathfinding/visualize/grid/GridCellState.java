@@ -20,4 +20,11 @@ public interface GridCellState {
    * @return true if this state is a start state
    */
   boolean isStart();
+
+  /**
+   * Marks if you can walk through this state
+   *
+   * @return true if you can walk through this node.
+   */
+  boolean isPassable();
 }

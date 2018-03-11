@@ -1,5 +1,6 @@
 package me.ialistannen.pathfinding.visualize;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javafx.animation.Animation;
@@ -16,8 +17,10 @@ import javafx.util.Duration;
 import me.ialistannen.pathfinding.visualize.algorithms.Algorithm;
 import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 import me.ialistannen.pathfinding.visualize.algorithms.astar.AStarAlgorithm;
+import me.ialistannen.pathfinding.visualize.algorithms.astar.DefaultDistanceFunction;
 import me.ialistannen.pathfinding.visualize.grid.DefaultGridState;
 import me.ialistannen.pathfinding.visualize.grid.DisplayedGrid;
+import me.ialistannen.pathfinding.visualize.grid.GridCoordinate.Direction;
 import me.ialistannen.pathfinding.visualize.grid.StatefulGridCoordinate;
 
 public class TestMain extends Application {
@@ -70,14 +73,19 @@ public class TestMain extends Application {
     grid.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.G) {
         new Thread(() -> {
-          Algorithm<DefaultGridState> algorithm = new AStarAlgorithm();
-          List<StatefulGridCoordinate<DefaultGridState>> steps = algorithm.compute(algorithmGrid)
+          List<Direction> directions = Arrays
+              .asList(Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST);
+          Algorithm<DefaultGridState> algorithm = new AStarAlgorithm(
+              DefaultDistanceFunction.MANHATTEN);
+          List<StatefulGridCoordinate<DefaultGridState>> steps = algorithm.compute(
+              algorithmGrid, directions
+          )
               .getSteps();
           AtomicInteger counter = new AtomicInteger();
 
           Timeline timeline = new Timeline();
 
-          KeyFrame keyFrame = new KeyFrame(Duration.millis(15), event1 -> {
+          KeyFrame keyFrame = new KeyFrame(Duration.millis(1), event1 -> {
             if (counter.get() >= steps.size()) {
               timeline.stop();
               return;
