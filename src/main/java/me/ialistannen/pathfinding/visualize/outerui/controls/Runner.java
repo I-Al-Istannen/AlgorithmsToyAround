@@ -5,6 +5,7 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.util.Duration;
 import me.ialistannen.pathfinding.visualize.algorithms.Algorithm;
 import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
@@ -24,7 +25,9 @@ public class Runner<T extends GridCellState> {
     ticker = new Timeline();
     ticker.setCycleCount(Animation.INDEFINITE);
     ticker.statusProperty()
-        .addListener((observable, oldValue, newValue) -> stateCallback.statusChanged(newValue));
+        .addListener((observable, oldValue, newValue) -> Platform.runLater(
+            () -> stateCallback.statusChanged(newValue)
+        ));
   }
 
   /**

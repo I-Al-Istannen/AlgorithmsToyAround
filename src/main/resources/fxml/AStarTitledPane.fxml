@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXRadioButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.VBox?>
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
@@ -12,18 +11,18 @@
   <content>
     <VBox alignment="CENTER">
       <children>
-        <CheckBox fx:id="diagonalCheckbox" mnemonicParsing="false" selected="true"
-          text="Allow diagonal">
-          <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-          </padding>
-        </CheckBox>
+        <JFXCheckBox fx:id="diagonalCheckbox" selected="true" text="Allow diagonal">
+          <VBox.margin>
+            <Insets bottom="20.0"/>
+          </VBox.margin>
+        </JFXCheckBox>
         <Label text="Distance function"/>
         <VBox spacing="10.0">
           <children>
-            <RadioButton fx:id="euclidianButton" mnemonicParsing="false" selected="true"
-              text="Euclidian"/>
-            <RadioButton fx:id="manhattenButton" mnemonicParsing="false" text="Manhatten"/>
+            <JFXRadioButton fx:id="euclidianButton" maxHeight="1.7976931348623157E308"
+              maxWidth="1.7976931348623157E308" selected="true" text="Euclidian"/>
+            <JFXRadioButton fx:id="manhattenButton" maxHeight="1.7976931348623157E308"
+              maxWidth="1.7976931348623157E308" text="Manhatten"/>
           </children>
           <VBox.margin>
             <Insets left="20.0" right="20.0" top="10.0"/>

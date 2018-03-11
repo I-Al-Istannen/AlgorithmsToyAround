@@ -58,7 +58,9 @@ public class ControlPanel extends BorderPane implements StateCallback {
 
   @FXML
   void onClearPath() {
-    grid.replaceIf(EMPTY, state -> state != WALL && state != START && state != END);
+    grid.replaceIf(EMPTY,
+        state -> state != EMPTY && state != WALL && state != START && state != END
+    );
   }
 
   @FXML
@@ -83,8 +85,10 @@ public class ControlPanel extends BorderPane implements StateCallback {
       return;
     }
 
-    Algorithm<DefaultGridState> algorithm = ((AlgorithmTitledPane) expandedPane).getAlgorithm();
-    runner.run(algorithm, grid);
+    new Thread(() -> {
+      Algorithm<DefaultGridState> algorithm = ((AlgorithmTitledPane) expandedPane).getAlgorithm();
+      runner.run(algorithm, grid);
+    }).start();
   }
 
   @Override
