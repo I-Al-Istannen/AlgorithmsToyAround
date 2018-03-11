@@ -3,6 +3,7 @@ package me.ialistannen.pathfinding.visualize.algorithms;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import me.ialistannen.pathfinding.visualize.grid.GridCellState;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate;
@@ -73,6 +74,9 @@ public class AlgorithmGrid<T extends GridCellState> {
    * @param state the new state
    */
   public void setStateAt(GridCoordinate coordinate, T state) {
+    Objects.requireNonNull(coordinate, "coordinate can not be null!");
+    Objects.requireNonNull(state, "state can not be null!");
+
     handleStateRemoval(coordinate);
 
     T oldState = getStateAt(coordinate);

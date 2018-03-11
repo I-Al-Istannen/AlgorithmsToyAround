@@ -17,11 +17,10 @@ import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 import me.ialistannen.pathfinding.visualize.algorithms.astar.AStarAlgorithm;
 import me.ialistannen.pathfinding.visualize.algorithms.distance.DefaultDistanceFunction;
 import me.ialistannen.pathfinding.visualize.grid.DefaultGridState;
-import me.ialistannen.pathfinding.visualize.grid.DisplayedGrid;
-import me.ialistannen.pathfinding.visualize.grid.DisplayedGrid.InteractionListener;
-import me.ialistannen.pathfinding.visualize.grid.DisplayedGrid.InteractionState;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate.Direction;
 import me.ialistannen.pathfinding.visualize.grid.StatefulGridCoordinate;
+import me.ialistannen.pathfinding.visualize.grid.interaction.PaintingGridListener;
+import me.ialistannen.pathfinding.visualize.grid.node.DisplayedGrid;
 
 public class TestMain extends Application {
 
@@ -33,7 +32,7 @@ public class TestMain extends Application {
         DefaultGridState.EMPTY, columns, rows
     );
     DisplayedGrid<DefaultGridState> grid = new DisplayedGrid<>(algorithmGrid);
-    grid.setInteractionListener(new Listener());
+    grid.setInteractionListener(new PaintingGridListener());
 
     for (int i = 0; i < rows * columns; i++) {
       int column = i / columns;
@@ -106,39 +105,5 @@ public class TestMain extends Application {
 
   public static void main(String[] args) {
     launch(args);
-  }
-
-  private static class Listener implements InteractionListener<DefaultGridState> {
-
-    private boolean isJustPaintingWalls;
-
-    @Override
-    public void onClick(InteractionState<DefaultGridState> state) {
-      if (state.getState() == DefaultGridState.WALL) {
-        state.getGrid().setStateAt(state.getCoordinate(), DefaultGridState.EMPTY);
-      } else if (state.getState() == DefaultGridState.EMPTY) {
-        state.getGrid().setStateAt(state.getCoordinate(), DefaultGridState.WALL);
-      }
-    }
-
-    @Override
-    public void onDragStart(InteractionState<DefaultGridState> state) {
-      isJustPaintingWalls =
-          state.getState() == DefaultGridState.EMPTY || state.getState() == DefaultGridState.WALL;
-    }
-
-    @Override
-    public void onDragOver(InteractionState<DefaultGridState> state,
-        InteractionState<DefaultGridState> dragState) {
-
-      if (isJustPaintingWalls) {
-        onClick(state);
-      }
-    }
-
-    @Override
-    public void onDragStop(InteractionState<DefaultGridState> state,
-        InteractionState<DefaultGridState> dragState) {
-    }
   }
 }

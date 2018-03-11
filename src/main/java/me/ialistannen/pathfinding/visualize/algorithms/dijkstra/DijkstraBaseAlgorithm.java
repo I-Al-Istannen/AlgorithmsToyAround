@@ -176,9 +176,7 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
    * @return the resulting {@link AlgorithmResult}
    */
   protected AlgorithmResult<DefaultGridState> backtrackResolve(T current) {
-    Objects.requireNonNull(current, "current can not be null!");
-
-    if (!grid.getStateAt(current.getCoordinate()).isEnd()) {
+    if (current == null || !grid.getStateAt(current.getCoordinate()).isEnd()) {
       return new AlgorithmResult<>(false, steps);
     }
 
