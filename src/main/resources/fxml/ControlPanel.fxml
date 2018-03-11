@@ -7,8 +7,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/8.0.162-ea"
-  xmlns:fx="http://javafx.com/fxml/1">
+<fx:root styleClass="rootPane" stylesheets="@../css/Base.css" type="BorderPane"
+  xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
   <top>
     <Accordion fx:id="accordion" minHeight="50.0" minWidth="50.0" BorderPane.alignment="CENTER">
       <BorderPane.margin>
@@ -41,7 +41,7 @@
             <Insets bottom="10.0" top="10.0"/>
          </BorderPane.margin>
          <children>
-            <Label text="Speed (ms)">
+            <Label styleClass="subHeading" text="Speed (ms)">
                <VBox.margin>
                   <Insets bottom="10.0"/>
                </VBox.margin>
@@ -49,7 +49,11 @@
             <JFXSlider fx:id="speedSlider" indicatorPosition="RIGHT" majorTickUnit="10.0" max="40.0"
               maxHeight="300.0" maxWidth="1.7976931348623157E308" min="2.0" minorTickCount="2"
               orientation="VERTICAL" showTickLabels="true" showTickMarks="true" value="7.0"
-              VBox.vgrow="ALWAYS"/>
+              VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets/>
+               </VBox.margin>
+            </JFXSlider>
          </children>
       </VBox>
    </center>

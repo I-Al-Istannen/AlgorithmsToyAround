@@ -7,7 +7,8 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.VBox?>
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-  type="TitledPane" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
+  styleClass="rootPane" stylesheets="@../css/Base.css" type="TitledPane"
+  xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
   <content>
     <VBox alignment="CENTER">
       <children>
@@ -16,7 +17,7 @@
             <Insets bottom="20.0"/>
           </VBox.margin>
         </JFXCheckBox>
-        <Label text="Distance function"/>
+        <Label styleClass="subHeading" text="Distance function"/>
         <VBox spacing="10.0">
           <children>
             <JFXRadioButton fx:id="euclidianButton" maxHeight="1.7976931348623157E308"

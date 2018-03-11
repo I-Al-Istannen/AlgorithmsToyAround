@@ -46,7 +46,10 @@ public class ControlPanel extends BorderPane implements StateCallback {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
 
+  @FXML
+  private void initialize() {
     accordion.getPanes().add(new DijkstraTitledPane());
     accordion.getPanes().add(new AStarTitledPane());
     accordion.setExpandedPane(accordion.getPanes().get(0));
