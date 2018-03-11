@@ -43,10 +43,16 @@ public class Runner<T extends GridCellState> {
 
     ticker.getKeyFrames().setAll(new KeyFrame(
         Duration.millis(delayMillis),
-        event -> tick(steps, grid)
+        event -> tick(steps, grid, 2)
     ));
 
     ticker.playFromStart();
+  }
+
+  private void tick(List<StatefulGridCoordinate<T>> steps, AlgorithmGrid<T> grid, int count) {
+    for (int i = 0; i < count; i++) {
+      tick(steps, grid);
+    }
   }
 
   private void tick(List<StatefulGridCoordinate<T>> steps, AlgorithmGrid<T> grid) {

@@ -5,6 +5,7 @@ import static me.ialistannen.pathfinding.visualize.grid.DefaultGridState.END;
 import static me.ialistannen.pathfinding.visualize.grid.DefaultGridState.START;
 import static me.ialistannen.pathfinding.visualize.grid.DefaultGridState.WALL;
 
+import com.jfoenix.controls.JFXSlider;
 import java.io.IOException;
 import javafx.animation.Animation.Status;
 import javafx.fxml.FXML;
@@ -30,6 +31,9 @@ public class ControlPanel extends BorderPane implements StateCallback {
   @FXML
   private Button goButton;
 
+  @FXML
+  private JFXSlider speedSlider;
+
   private AlgorithmGrid<DefaultGridState> grid;
   private Runner<DefaultGridState> runner;
 
@@ -46,8 +50,6 @@ public class ControlPanel extends BorderPane implements StateCallback {
     accordion.getPanes().add(new DijkstraTitledPane());
     accordion.getPanes().add(new AStarTitledPane());
     accordion.setExpandedPane(accordion.getPanes().get(0));
-
-    runner = new Runner<>(6, this);
   }
 
   public void setGrid(AlgorithmGrid<DefaultGridState> grid) {
@@ -66,12 +68,14 @@ public class ControlPanel extends BorderPane implements StateCallback {
 
   @FXML
   void onGo() {
-    if (runner.isRunning()) {
+    if (runner != null && runner.isRunning()) {
       runner.stop();
       onClearPath();
       return;
     }
     onClearPath();
+
+    runner = new Runner<>((int) speedSlider.getValue(), this);
 
     TitledPane expandedPane = accordion.getExpandedPane();
 
