@@ -17,7 +17,7 @@ import javafx.util.Duration;
 import me.ialistannen.pathfinding.visualize.algorithms.Algorithm;
 import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 import me.ialistannen.pathfinding.visualize.algorithms.astar.AStarAlgorithm;
-import me.ialistannen.pathfinding.visualize.algorithms.astar.DefaultDistanceFunction;
+import me.ialistannen.pathfinding.visualize.algorithms.distance.DefaultDistanceFunction;
 import me.ialistannen.pathfinding.visualize.grid.DefaultGridState;
 import me.ialistannen.pathfinding.visualize.grid.DisplayedGrid;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate.Direction;
@@ -63,7 +63,6 @@ public class TestMain extends Application {
     grid.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
     primaryStage.setScene(new Scene(grid));
-//    primaryStage.setFullScreen(true);
     primaryStage.setWidth(1000);
     primaryStage.setHeight(1000);
     primaryStage.centerOnScreen();

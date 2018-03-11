@@ -1,4 +1,4 @@
-package me.ialistannen.pathfinding.visualize.algorithms.astar;
+package me.ialistannen.pathfinding.visualize.algorithms.distance;
 
 import java.util.function.BiFunction;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate;

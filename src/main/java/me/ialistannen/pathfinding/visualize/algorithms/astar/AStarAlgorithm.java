@@ -6,6 +6,8 @@ import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 import me.ialistannen.pathfinding.visualize.algorithms.BaseNode;
 import me.ialistannen.pathfinding.visualize.algorithms.astar.AStarAlgorithm.AStarNode;
 import me.ialistannen.pathfinding.visualize.algorithms.dijkstra.DijkstraBaseAlgorithm;
+import me.ialistannen.pathfinding.visualize.algorithms.distance.DefaultDistanceFunction;
+import me.ialistannen.pathfinding.visualize.algorithms.distance.DistanceFunction;
 import me.ialistannen.pathfinding.visualize.grid.DefaultGridState;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate.Direction;

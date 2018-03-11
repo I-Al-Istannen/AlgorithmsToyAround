@@ -1,5 +1,7 @@
 package me.ialistannen.pathfinding.visualize.grid;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class GridCoordinate {
@@ -25,18 +27,6 @@ public class GridCoordinate {
         getColumn() + direction.getxMod(),
         getRow() + direction.getyMod()
     );
-  }
-
-  public double euclidianDistanceTo(GridCoordinate other) {
-    double dX = other.getColumn() - getColumn();
-    double dY = other.getRow() - getRow();
-    return Math.sqrt(dX * dX + dY * dY);
-  }
-
-  public double manhattenDistanceTo(GridCoordinate other) {
-    double dX = other.getColumn() - getColumn();
-    double dY = other.getRow() - getRow();
-    return Math.abs(dX) + Math.abs(dY);
   }
 
   @Override
@@ -69,6 +59,9 @@ public class GridCoordinate {
     NORTH(0, 1, 1), SOUTH(0, -1, 1), WEST(-1, 0, 1), EAST(1, 0, 1),
     NORTH_EAST(1, 1, Math.sqrt(2)), SOUTH_EAST(1, -1, Math.sqrt(2)),
     SOUTH_WEST(-1, -1, Math.sqrt(2)), NORTH_WEST(-1, 1, Math.sqrt(2));
+
+    public static List<Direction> NO_DIAGONAL = Arrays.asList(NORTH, SOUTH, EAST, WEST);
+    public static List<Direction> WITH_DIAGONAL = Arrays.asList(Direction.values());
 
     private int xMod;
     private int yMod;
