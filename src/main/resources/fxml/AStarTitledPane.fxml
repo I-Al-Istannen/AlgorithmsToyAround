@@ -24,6 +24,8 @@
               maxWidth="1.7976931348623157E308" selected="true" text="Euclidian"/>
             <JFXRadioButton fx:id="manhattenButton" maxHeight="1.7976931348623157E308"
               maxWidth="1.7976931348623157E308" text="Manhatten"/>
+            <JFXRadioButton fx:id="chebyshevButton" maxHeight="1.7976931348623157E308"
+              maxWidth="1.7976931348623157E308" text="Chebyshev"/>
           </children>
           <VBox.margin>
             <Insets left="20.0" right="20.0" top="10.0"/>

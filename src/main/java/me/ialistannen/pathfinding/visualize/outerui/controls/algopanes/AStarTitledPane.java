@@ -9,6 +9,7 @@ import javafx.scene.control.ToggleGroup;
 import me.ialistannen.pathfinding.visualize.algorithms.Algorithm;
 import me.ialistannen.pathfinding.visualize.algorithms.astar.AStarAlgorithm;
 import me.ialistannen.pathfinding.visualize.algorithms.distance.DefaultDistanceFunction;
+import me.ialistannen.pathfinding.visualize.algorithms.distance.DistanceFunction;
 import me.ialistannen.pathfinding.visualize.grid.DefaultGridState;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate.Direction;
 
@@ -22,6 +23,9 @@ public class AStarTitledPane extends AlgorithmTitledPane {
 
   @FXML
   private RadioButton manhattenButton;
+
+  @FXML
+  private RadioButton chebyshevButton;
 
 
   public AStarTitledPane() {
@@ -45,18 +49,27 @@ public class AStarTitledPane extends AlgorithmTitledPane {
     ToggleGroup toggleGroup = new ToggleGroup();
     manhattenButton.setToggleGroup(toggleGroup);
     euclidianButton.setToggleGroup(toggleGroup);
+    chebyshevButton.setToggleGroup(toggleGroup);
   }
 
 
   @Override
   public Algorithm<DefaultGridState> getAlgorithm() {
     return new AStarAlgorithm(
-        manhattenButton.isSelected()
-            ? DefaultDistanceFunction.MANHATTEN
-            : DefaultDistanceFunction.EUCLIDIAN,
+        getDistanceFunction(),
         diagonalCheckbox.isSelected()
             ? Direction.WITH_DIAGONAL
             : Direction.NO_DIAGONAL
     );
+  }
+
+  private DistanceFunction getDistanceFunction() {
+    if (manhattenButton.isSelected()) {
+      return DefaultDistanceFunction.MANHATTEN;
+    }
+    if (euclidianButton.isSelected()) {
+      return DefaultDistanceFunction.EUCLIDIAN;
+    }
+    return DefaultDistanceFunction.CHEBYSHEV;
   }
 }

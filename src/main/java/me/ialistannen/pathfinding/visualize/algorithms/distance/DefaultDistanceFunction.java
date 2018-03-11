@@ -15,6 +15,12 @@ public enum DefaultDistanceFunction implements DistanceFunction {
     double dY = one.getRow() - two.getRow();
 
     return Math.sqrt(dX * dX + dY * dY);
+  }),
+  CHEBYSHEV((one, two) -> {
+    double dX = one.getColumn() - two.getColumn();
+    double dY = one.getRow() - two.getRow();
+
+    return Math.max(Math.abs(dX), Math.abs(dY));
   });
 
   private BiFunction<GridCoordinate, GridCoordinate, Double> function;
