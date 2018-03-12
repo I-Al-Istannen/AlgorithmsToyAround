@@ -1,41 +1,33 @@
 package me.ialistannen.pathfinding.visualize.algorithms.dijkstra;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import me.ialistannen.pathfinding.visualize.algorithms.Algorithm;
 import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmResult;
 import me.ialistannen.pathfinding.visualize.algorithms.BaseNode;
+import me.ialistannen.pathfinding.visualize.algorithms.base.BaseAlgorithm;
 import me.ialistannen.pathfinding.visualize.grid.DefaultGridState;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate.Direction;
-import me.ialistannen.pathfinding.visualize.grid.StatefulGridCoordinate;
 
-public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
-    implements Algorithm<DefaultGridState> {
+public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>> extends
+    BaseAlgorithm<DefaultGridState, T> {
 
-  private Map<GridCoordinate, T> nodeCache;
-  private Set<GridCoordinate> closedSet;
+  private final Consumer<T> DO_NOTHING = t -> {
+  };
+
   private TreeSet<T> openSet;
-  private List<StatefulGridCoordinate<DefaultGridState>> steps;
-  private AlgorithmGrid<DefaultGridState> grid;
-  private List<Direction> directions;
 
   public DijkstraBaseAlgorithm(List<Direction> directions) {
-    this.directions = directions;
+    super(directions);
   }
 
   @Override
-  public AlgorithmResult<DefaultGridState> compute(AlgorithmGrid<DefaultGridState> grid) {
-    reset(grid);
-
+  protected AlgorithmResult<DefaultGridState> compute() {
     grid.getStarts().stream()
         .map(coordinate -> createStartNode(coordinate, grid))
         .forEach(openSet::add);
@@ -52,18 +44,16 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
       expand(tmp);
     }
 
-    return backtrackResolve(tmp);
+    return backtrackResolve(tmp, DefaultGridState.SOLUTION);
   }
 
   /**
    * Resets this {@link Algorithm} to be able to search again.
    */
-  private void reset(AlgorithmGrid<DefaultGridState> algorithmGrid) {
-    this.nodeCache = new HashMap<>();
-    this.closedSet = new HashSet<>();
-    this.steps = new ArrayList<>();
+  protected void reset(AlgorithmGrid<DefaultGridState> algorithmGrid) {
+    super.reset(algorithmGrid);
+
     this.openSet = new TreeSet<>(createOpenSetComparator());
-    this.grid = Objects.requireNonNull(algorithmGrid, "algorithmGrid can not be null!");
   }
 
   /**
@@ -119,12 +109,12 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
   protected void expand(T node) {
     Objects.requireNonNull(node, "node can not be null!");
 
-    closedSet.add(node.getCoordinate());
+    markAsClosed(node.getCoordinate());
 
     for (Direction direction : directions) {
       GridCoordinate newCoordinate = node.getCoordinate().getNeighbour(direction);
 
-      if (!isPassable(node.getCoordinate(), newCoordinate) || closedSet.contains(newCoordinate)) {
+      if (!isPassable(node.getCoordinate(), newCoordinate) || isClosed(newCoordinate)) {
         continue;
       }
 
@@ -152,12 +142,7 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
     Objects.requireNonNull(coordinate, "coordinate can not be null!");
     Objects.requireNonNull(defaultNode, "defaultNode can not be null!");
 
-    if (nodeCache.containsKey(coordinate)) {
-      return nodeCache.get(coordinate);
-    }
-    nodeCache.put(coordinate, defaultNode);
-
-    return nodeCache.get(coordinate);
+    return newNodeOrCached(coordinate, defaultNode, DO_NOTHING);
   }
 
   /**
@@ -168,41 +153,9 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
   protected void markNodeForExamination(T node) {
     Objects.requireNonNull(node, "node can not be null!");
 
-    openSet.add(node);
-    addStep(node.getCoordinate(), DefaultGridState.OPEN_SET);
-  }
-
-  /**
-   * Resolves the way back, from the passed node to the start and adds them to steps in reverse
-   * order.
-   *
-   * @param current the current node, i.e. the last one that was examined (typically the end node)
-   * @return the resulting {@link AlgorithmResult}
-   */
-  @SuppressWarnings("WeakerAccess")
-  protected AlgorithmResult<DefaultGridState> backtrackResolve(T current) {
-    if (current == null || !grid.getStateAt(current.getCoordinate()).isEnd()) {
-      return new AlgorithmResult<>(false, steps);
+    // only add a step for newly found nodes
+    if (openSet.add(node)) {
+      addStep(node.getCoordinate(), DefaultGridState.OPEN_SET);
     }
-
-    while (current != null) {
-      addStep(current.getCoordinate(), DefaultGridState.SOLUTION);
-      current = current.getParent();
-    }
-    return new AlgorithmResult<>(true, steps);
-  }
-
-  /**
-   * Adds a step to the output result.
-   *
-   * @param coordinate the coordinate that changed
-   * @param state the new state
-   */
-  @SuppressWarnings("WeakerAccess")
-  protected void addStep(GridCoordinate coordinate, DefaultGridState state) {
-    Objects.requireNonNull(coordinate, "coordinate can not be null!");
-    Objects.requireNonNull(state, "state can not be null!");
-
-    steps.add(new StatefulGridCoordinate<>(coordinate, state));
   }
 }
