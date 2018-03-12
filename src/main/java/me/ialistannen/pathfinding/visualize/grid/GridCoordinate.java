@@ -22,6 +22,12 @@ public class GridCoordinate {
     return row;
   }
 
+  /**
+   * Returns a neighbouring coordinate.
+   *
+   * @param direction the direction to walk into.
+   * @return the neighbouring coordinate
+   */
   public GridCoordinate getNeighbour(Direction direction) {
     return new GridCoordinate(
         getColumn() + direction.getxMod(),

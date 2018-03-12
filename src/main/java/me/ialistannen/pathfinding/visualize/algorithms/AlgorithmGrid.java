@@ -46,11 +46,6 @@ public class AlgorithmGrid<T extends GridCellState> {
     return height;
   }
 
-  public boolean isOutside(GridCoordinate coordinate) {
-    return coordinate.getColumn() >= getWidth() || coordinate.getRow() >= getHeight()
-        || coordinate.getColumn() < 0 || coordinate.getRow() < 0;
-  }
-
   /**
    * Returns the state at the given coordinate or the default value, if not set.
    *
@@ -68,7 +63,7 @@ public class AlgorithmGrid<T extends GridCellState> {
    * @param row the row
    * @return the state at the coordinate or the default value
    */
-  public T getStateAt(int column, int row) {
+  private T getStateAt(int column, int row) {
     return getStateAt(new GridCoordinate(column, row));
   }
 
@@ -166,6 +161,42 @@ public class AlgorithmGrid<T extends GridCellState> {
   public GridCoordinate getEnd() {
     return endState;
   }
+
+  /**
+   * Checks if you can move from the given coordinate to the given neighbour.
+   *
+   * @param from the start coordinate
+   * @param to the neighbour to move to
+   * @return true if you can move that way
+   */
+  public boolean canMove(GridCoordinate from, GridCoordinate to) {
+    if (isOutside(from) || isOutside(to)) {
+      return false;
+    }
+
+    T state = getStateAt(to);
+    if (!state.isPassable()) {
+      return false;
+    }
+
+    int dX = to.getColumn() - from.getColumn();
+    int dY = to.getRow() - from.getRow();
+
+    return getStateAt(from.getColumn() + dX, from.getRow()).isPassable()
+        && getStateAt(from.getColumn(), from.getRow() + dY).isPassable();
+  }
+
+  /**
+   * Checks if a coordinate is outside the grid.
+   *
+   * @param coordinate the {@link GridCoordinate} to check
+   * @return true if the coordinate is outside the grid
+   */
+  private boolean isOutside(GridCoordinate coordinate) {
+    return coordinate.getColumn() >= getWidth() || coordinate.getRow() >= getHeight()
+        || coordinate.getColumn() < 0 || coordinate.getRow() < 0;
+  }
+
 
   public interface ChangeCallback<T> {
 

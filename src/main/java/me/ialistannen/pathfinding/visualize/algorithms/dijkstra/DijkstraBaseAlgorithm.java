@@ -58,7 +58,7 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
   /**
    * Resets this {@link Algorithm} to be able to search again.
    */
-  protected void reset(AlgorithmGrid<DefaultGridState> algorithmGrid) {
+  private void reset(AlgorithmGrid<DefaultGridState> algorithmGrid) {
     this.nodeCache = new HashMap<>();
     this.closedSet = new HashSet<>();
     this.steps = new ArrayList<>();
@@ -89,7 +89,7 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
    * @param coordinate the coordinate to check at
    * @return true if the node is an end node.
    */
-  protected boolean isEnd(GridCoordinate coordinate) {
+  private boolean isEnd(GridCoordinate coordinate) {
     Objects.requireNonNull(coordinate, "coordinate can not be null!");
 
     return grid.getStateAt(coordinate).isEnd();
@@ -102,11 +102,12 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
    * @param to the coordinate you walk to
    * @return true if you can walk that way
    */
+  @SuppressWarnings("WeakerAccess")
   protected boolean isPassable(GridCoordinate from, GridCoordinate to) {
     Objects.requireNonNull(from, "from can not be null!");
     Objects.requireNonNull(to, "to can not be null!");
 
-    return grid.getStateAt(to).isPassable() && !grid.isOutside(to);
+    return grid.canMove(from, to);
   }
 
   /**
@@ -114,6 +115,7 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
    *
    * @param node the node to visit
    */
+  @SuppressWarnings("WeakerAccess")
   protected void expand(T node) {
     Objects.requireNonNull(node, "node can not be null!");
 
@@ -177,6 +179,7 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
    * @param current the current node, i.e. the last one that was examined (typically the end node)
    * @return the resulting {@link AlgorithmResult}
    */
+  @SuppressWarnings("WeakerAccess")
   protected AlgorithmResult<DefaultGridState> backtrackResolve(T current) {
     if (current == null || !grid.getStateAt(current.getCoordinate()).isEnd()) {
       return new AlgorithmResult<>(false, steps);
@@ -195,6 +198,7 @@ public abstract class DijkstraBaseAlgorithm<T extends BaseNode<T>>
    * @param coordinate the coordinate that changed
    * @param state the new state
    */
+  @SuppressWarnings("WeakerAccess")
   protected void addStep(GridCoordinate coordinate, DefaultGridState state) {
     Objects.requireNonNull(coordinate, "coordinate can not be null!");
     Objects.requireNonNull(state, "state can not be null!");
