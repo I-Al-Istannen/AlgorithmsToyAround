@@ -25,7 +25,7 @@ public class AStarAlgorithm extends DijkstraBaseAlgorithm<AStarNode> {
   @Override
   protected Comparator<AStarNode> createOpenSetComparator() {
     return Comparator.comparingDouble(this::getTotalDistance)
-        .thenComparingDouble(this::getEuclidianDistanceToTarget)
+        .thenComparingDouble(this::getEuclideanDistanceToTarget)
         .thenComparingInt(Objects::hashCode);
   }
 
@@ -35,8 +35,8 @@ public class AStarAlgorithm extends DijkstraBaseAlgorithm<AStarNode> {
     );
   }
 
-  private double getEuclidianDistanceToTarget(AStarNode node) {
-    return DefaultDistanceFunction.EUCLIDIAN.getDistance(node.getCoordinate(), node.getTarget());
+  private double getEuclideanDistanceToTarget(AStarNode node) {
+    return DefaultDistanceFunction.EUCLIDEAN.getDistance(node.getCoordinate(), node.getTarget());
   }
 
   @Override

@@ -23,9 +23,9 @@ public enum BaseFunction implements me.ialistannen.algorithms.math.parser.mathop
   MAX(2, "max", getOperator(Math::max)),
 
   // because otherwise javac things that is ambiguous
-  ABSOLUTE(1, "abs", getOperator(x -> Math.abs(x))),
+  ABSOLUTE(1, "abs", getOperator(Math::abs)),
   // because otherwise javac things that is ambiguous
-  SIGNUM(1, "signum", getOperator(x -> Math.signum(x))),
+  SIGNUM(1, "signum", getOperator(Math::signum)),
 
   EXP(1, "exp", getOperator(Math::exp)),
   LOG(1, "log", getOperator(Math::log10)),

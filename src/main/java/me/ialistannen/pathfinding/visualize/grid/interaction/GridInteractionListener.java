@@ -22,7 +22,7 @@ public interface GridInteractionListener<T extends GridCellState> {
    * Called when a node is being dragged over.
    *
    * @param state the state containing information about the event
-   * @param dragState constains information about the drag origin
+   * @param dragState contains information about the drag origin
    */
   void onDragOver(GridInteractionState<T> state, GridInteractionState<T> dragState);
 
@@ -30,7 +30,7 @@ public interface GridInteractionListener<T extends GridCellState> {
    * Called when the drag has ended.
    *
    * @param state the state containing information about the event
-   * @param dragState constains information about the drag origin
+   * @param dragState contains information about the drag origin
    */
   void onDragStop(GridInteractionState<T> state, GridInteractionState<T> dragState);
 

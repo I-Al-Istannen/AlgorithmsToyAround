@@ -19,7 +19,7 @@ public class AStarTitledPane extends AlgorithmTitledPane {
   private CheckBox diagonalCheckbox;
 
   @FXML
-  private RadioButton euclidianButton;
+  private RadioButton euclideanButton;
 
   @FXML
   private RadioButton manhattenButton;
@@ -48,7 +48,7 @@ public class AStarTitledPane extends AlgorithmTitledPane {
   private void initialize() {
     ToggleGroup toggleGroup = new ToggleGroup();
     manhattenButton.setToggleGroup(toggleGroup);
-    euclidianButton.setToggleGroup(toggleGroup);
+    euclideanButton.setToggleGroup(toggleGroup);
     chebyshevButton.setToggleGroup(toggleGroup);
   }
 
@@ -67,8 +67,8 @@ public class AStarTitledPane extends AlgorithmTitledPane {
     if (manhattenButton.isSelected()) {
       return DefaultDistanceFunction.MANHATTEN;
     }
-    if (euclidianButton.isSelected()) {
-      return DefaultDistanceFunction.EUCLIDIAN;
+    if (euclideanButton.isSelected()) {
+      return DefaultDistanceFunction.EUCLIDEAN;
     }
     return DefaultDistanceFunction.CHEBYSHEV;
   }

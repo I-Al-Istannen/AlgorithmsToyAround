@@ -20,7 +20,7 @@
         <Label styleClass="subHeading" text="Distance function"/>
         <VBox spacing="10.0">
           <children>
-            <JFXRadioButton fx:id="euclidianButton" maxHeight="1.7976931348623157E308"
+            <JFXRadioButton fx:id="euclideanButton" maxHeight="1.7976931348623157E308"
               maxWidth="1.7976931348623157E308" selected="true" text="Euclidian"/>
             <JFXRadioButton fx:id="manhattenButton" maxHeight="1.7976931348623157E308"
               maxWidth="1.7976931348623157E308" text="Manhatten"/>

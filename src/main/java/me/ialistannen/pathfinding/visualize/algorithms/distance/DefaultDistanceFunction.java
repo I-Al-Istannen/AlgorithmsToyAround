@@ -10,7 +10,7 @@ public enum DefaultDistanceFunction implements DistanceFunction {
 
     return Math.abs(dX) + Math.abs(dY);
   }),
-  EUCLIDIAN((one, two) -> {
+  EUCLIDEAN((one, two) -> {
     double dX = one.getColumn() - two.getColumn();
     double dY = one.getRow() - two.getRow();
 
