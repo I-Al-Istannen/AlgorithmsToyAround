@@ -6,14 +6,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import me.ialistannen.pathfinding.visualize.outerui.controls.algopanes.parts.DistanceSelectionPanel?>
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-  styleClass="rootPane" stylesheets="@../css/Base.css" type="TitledPane"
-  xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
+  stylesheets="@../css/Base.css" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.162-ea"
+  xmlns:fx="http://javafx.com/fxml/1">
   <content>
     <VBox alignment="CENTER">
       <children>
-        <JFXCheckBox fx:id="diagonalCheckbox" selected="true" text="Allow diagonal">
+        <JFXCheckBox fx:id="diagonalCheckbox" selected="true" text="Allow Diagonal">
           <VBox.margin>
-            <Insets bottom="20.0"/>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
           </VBox.margin>
         </JFXCheckBox>
         <DistanceSelectionPanel fx:id="distancePanel"/>

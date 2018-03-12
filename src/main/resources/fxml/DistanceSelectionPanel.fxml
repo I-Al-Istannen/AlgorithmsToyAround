@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<fx:root alignment="CENTER" styleClass="rootPane" stylesheets="@../css/Base.css" type="VBox"
+  xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
+
+  <children>
+    <Label styleClass="subHeading" text="Distance function">
+      <VBox.margin>
+        <Insets/>
+      </VBox.margin>
+    </Label>
+    <VBox spacing="10.0">
+      <children>
+        <JFXRadioButton fx:id="euclideanButton" text="Euclidean"/>
+        <JFXRadioButton fx:id="manhattenButton" selected="true" text="Manhatten"/>
+        <JFXRadioButton fx:id="chebyshevButton" text="Chebyshev"/>
+      </children>
+      <VBox.margin>
+        <Insets left="20.0" right="20.0" top="10.0"/>
+      </VBox.margin>
+    </VBox>
+  </children>
+  <padding>
+    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+  </padding>
+</fx:root>
