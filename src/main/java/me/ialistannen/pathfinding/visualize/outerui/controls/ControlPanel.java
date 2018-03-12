@@ -21,6 +21,7 @@ import me.ialistannen.pathfinding.visualize.outerui.controls.Runner.StateCallbac
 import me.ialistannen.pathfinding.visualize.outerui.controls.algopanes.AStarTitledPane;
 import me.ialistannen.pathfinding.visualize.outerui.controls.algopanes.AlgorithmTitledPane;
 import me.ialistannen.pathfinding.visualize.outerui.controls.algopanes.BreadthFirstPane;
+import me.ialistannen.pathfinding.visualize.outerui.controls.algopanes.DepthFirstPane;
 import me.ialistannen.pathfinding.visualize.outerui.controls.algopanes.DijkstraTitledPane;
 import me.ialistannen.pathfinding.visualize.outerui.controls.algopanes.GreedyBFSPane;
 
@@ -56,6 +57,7 @@ public class ControlPanel extends BorderPane implements StateCallback {
     accordion.getPanes().add(new AStarTitledPane());
     accordion.getPanes().add(new BreadthFirstPane());
     accordion.getPanes().add(new GreedyBFSPane());
+    accordion.getPanes().add(new DepthFirstPane());
     accordion.setExpandedPane(accordion.getPanes().get(0));
   }
 

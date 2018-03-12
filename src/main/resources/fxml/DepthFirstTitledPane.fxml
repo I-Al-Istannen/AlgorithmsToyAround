@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TitledPane?>
+<fx:root animated="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+  minWidth="-Infinity" text="untitled" type="TitledPane" xmlns="http://javafx.com/javafx/8.0.162-ea"
+  xmlns:fx="http://javafx.com/fxml/1">
+  <content>
+    <JFXCheckBox fx:id="diagonalCheckbox" selected="true" text="Allow Diagonal">
+      <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+      </padding>
+    </JFXCheckBox>
+  </content>
+</fx:root>
