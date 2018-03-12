@@ -2,10 +2,10 @@ package me.ialistannen.pathfinding.visualize.algorithms.dijkstra;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
 import me.ialistannen.pathfinding.visualize.algorithms.BaseNode;
 import me.ialistannen.pathfinding.visualize.algorithms.dijkstra.DijkstraAlgorithm.DijkstraNode;
+import me.ialistannen.pathfinding.visualize.algorithms.distance.DefaultDistanceFunction;
 import me.ialistannen.pathfinding.visualize.grid.DefaultGridState;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate;
 import me.ialistannen.pathfinding.visualize.grid.GridCoordinate.Direction;
@@ -19,13 +19,14 @@ public class DijkstraAlgorithm extends DijkstraBaseAlgorithm<DijkstraNode> {
   @Override
   protected Comparator<DijkstraNode> createOpenSetComparator() {
     return Comparator.comparingDouble(DijkstraNode::getDistanceToStart)
-        .thenComparing(Objects::hashCode);
+        .thenComparingDouble(DijkstraNode::getDistanceToTarget)
+        .thenComparing(System::identityHashCode);
   }
 
   @Override
   protected DijkstraNode createStartNode(GridCoordinate coordinate,
       AlgorithmGrid<DefaultGridState> grid) {
-    return new DijkstraNode(0, coordinate, null);
+    return new DijkstraNode(0, coordinate, grid.getEnd(), null);
   }
 
   @Override
@@ -36,7 +37,7 @@ public class DijkstraAlgorithm extends DijkstraBaseAlgorithm<DijkstraNode> {
     DijkstraNode node = getCachedOrCreate(
         newCoordinate,
         new DijkstraNode(
-            newDistance, newCoordinate, parent
+            newDistance, newCoordinate, parent.getTarget(), parent
         )
     );
 
@@ -50,8 +51,13 @@ public class DijkstraAlgorithm extends DijkstraBaseAlgorithm<DijkstraNode> {
 
   static class DijkstraNode extends BaseNode<DijkstraNode> {
 
-    private DijkstraNode(double distanceToStart, GridCoordinate coordinate, DijkstraNode parent) {
-      super(distanceToStart, coordinate, null, parent);
+    private DijkstraNode(double distanceToStart, GridCoordinate coordinate, GridCoordinate target,
+        DijkstraNode parent) {
+      super(distanceToStart, coordinate, target, parent);
+    }
+
+    private double getDistanceToTarget() {
+      return DefaultDistanceFunction.EUCLIDEAN.getDistance(getCoordinate(), getTarget());
     }
   }
 }
