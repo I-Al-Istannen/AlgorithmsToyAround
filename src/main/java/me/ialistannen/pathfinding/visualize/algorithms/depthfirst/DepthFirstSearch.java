@@ -1,6 +1,8 @@
 package me.ialistannen.pathfinding.visualize.algorithms.depthfirst;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import me.ialistannen.pathfinding.visualize.algorithms.AlgorithmGrid;
@@ -17,7 +19,13 @@ public class DepthFirstSearch extends BaseAlgorithm<DefaultGridState, DepthFirst
   private Deque<DepthFirstNode> nodes;
 
   public DepthFirstSearch(List<Direction> directions) {
-    super(directions);
+    super(reverse(directions));
+  }
+
+  private static <T> List<T> reverse(List<T> list) {
+    ArrayList<T> arrayList = new ArrayList<>(list);
+    Collections.reverse(arrayList);
+    return arrayList;
   }
 
   @Override
@@ -26,21 +34,19 @@ public class DepthFirstSearch extends BaseAlgorithm<DefaultGridState, DepthFirst
       nodes.add(new DepthFirstNode(0, gridCoordinate, grid.getEnd(), null));
     }
 
-    DepthFirstNode tmp2 = null;
     DepthFirstNode tmp;
     while ((tmp = nodes.pollFirst()) != null) {
       GridCoordinate coordinate = tmp.getCoordinate();
 
       if (grid.getStateAt(coordinate).isEnd()) {
-        tmp2 = tmp;
-//        break;
+        break;
       }
 
       addStep(coordinate, DefaultGridState.EXAMINED);
       expand(tmp);
     }
 
-    return backtrackResolve(tmp2, DefaultGridState.SOLUTION);
+    return backtrackResolve(tmp, DefaultGridState.SOLUTION);
   }
 
   @Override

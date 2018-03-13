@@ -47,13 +47,17 @@ public class PaintingGridListener implements GridInteractionListener<DefaultGrid
   @Override
   public void onDragOver(GridInteractionState<DefaultGridState> state,
       GridInteractionState<DefaultGridState> dragState) {
-    currentListener.onDragOver(state, dragState);
+    if (currentListener != null) {
+      currentListener.onDragOver(state, dragState);
+    }
   }
 
   @Override
   public void onDragStop(GridInteractionState<DefaultGridState> state,
       GridInteractionState<DefaultGridState> dragState) {
-    currentListener.onDragStop(state, dragState);
+    if (currentListener != null) {
+      currentListener.onDragStop(state, dragState);
+    }
 
     currentListener = null;
   }

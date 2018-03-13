@@ -35,6 +35,17 @@ public class GridCoordinate {
     );
   }
 
+  /**
+   * Returns a new {@link GridCoordinate} with the given values added to this coordinate.
+   *
+   * @param column the columns to add
+   * @param row the rows to add
+   * @return the new coordinate
+   */
+  public GridCoordinate add(int column, int row) {
+    return new GridCoordinate(getColumn() + column, getRow() + row);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -62,7 +73,7 @@ public class GridCoordinate {
   }
 
   public enum Direction {
-    NORTH(0, 1, 1), SOUTH(0, -1, 1), WEST(-1, 0, 1), EAST(1, 0, 1),
+    NORTH(0, -1, 1), SOUTH(0, 1, 1), WEST(-1, 0, 1), EAST(1, 0, 1),
     NORTH_EAST(1, 1, Math.sqrt(2)), SOUTH_EAST(1, -1, Math.sqrt(2)),
     SOUTH_WEST(-1, -1, Math.sqrt(2)), NORTH_WEST(-1, 1, Math.sqrt(2));
 
@@ -89,6 +100,34 @@ public class GridCoordinate {
 
     public double getCost() {
       return cost;
+    }
+
+    /**
+     * @return the opposite direction
+     */
+    public Direction opposite() {
+      return forMod(getxMod() * -1, getyMod() * -1);
+    }
+
+    public boolean isDiagonal() {
+      return xMod != 0 && yMod != 0;
+    }
+
+    /**
+     * Returns the {@link Direction} for the given modifies
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the direction or null if none matched
+     */
+    public static Direction forMod(int x, int y) {
+      return Arrays
+          .stream(values())
+          .filter(direction ->
+              direction.getxMod() == Math.signum(x) && direction.getyMod() == Math.signum(y)
+          )
+          .findFirst()
+          .orElse(null);
     }
   }
 }

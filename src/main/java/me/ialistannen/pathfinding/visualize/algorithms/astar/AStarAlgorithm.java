@@ -62,9 +62,9 @@ public class AStarAlgorithm extends DijkstraBaseAlgorithm<AStarNode> {
     markNodeForExamination(node);
   }
 
-  static class AStarNode extends BaseNode<AStarNode> {
+  protected static class AStarNode extends BaseNode<AStarNode> {
 
-    AStarNode(double distanceToStart, GridCoordinate coordinate, GridCoordinate target,
+    public AStarNode(double distanceToStart, GridCoordinate coordinate, GridCoordinate target,
         AStarNode parent) {
       super(distanceToStart, coordinate, target, parent);
     }

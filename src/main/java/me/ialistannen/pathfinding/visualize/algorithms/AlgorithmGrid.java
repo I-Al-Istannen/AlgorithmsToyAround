@@ -183,7 +183,7 @@ public class AlgorithmGrid<T extends GridCellState> {
     int dY = to.getRow() - from.getRow();
 
     return getStateAt(from.getColumn() + dX, from.getRow()).isPassable()
-        && getStateAt(from.getColumn(), from.getRow() + dY).isPassable();
+        || getStateAt(from.getColumn(), from.getRow() + dY).isPassable();
   }
 
   /**
@@ -195,6 +195,16 @@ public class AlgorithmGrid<T extends GridCellState> {
   private boolean isOutside(GridCoordinate coordinate) {
     return coordinate.getColumn() >= getWidth() || coordinate.getRow() >= getHeight()
         || coordinate.getColumn() < 0 || coordinate.getRow() < 0;
+  }
+
+  /**
+   * Checks if you can not move through a specified coordinate.
+   *
+   * @param coordinate the {@link GridCoordinate} to check
+   * @return true if the coordinate is blocked
+   */
+  public boolean isBlocked(GridCoordinate coordinate) {
+    return !getStateAt(coordinate).isPassable();
   }
 
 
