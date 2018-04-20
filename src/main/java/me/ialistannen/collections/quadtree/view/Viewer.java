@@ -66,6 +66,8 @@ public class Viewer extends Application {
     canvas.setOnKeyPressed(event -> {
       if (event.getCode() == KeyCode.P) {
         drawPoints.set(!drawPoints.get());
+      } else if (event.getCode() == KeyCode.C) {
+        quadTree.clear();
       }
       canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
       treeRenderer.render(canvas, quadTree, drawPoints.get());

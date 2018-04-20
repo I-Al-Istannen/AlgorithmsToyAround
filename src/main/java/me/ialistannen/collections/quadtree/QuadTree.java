@@ -20,6 +20,13 @@ public class QuadTree {
   }
 
   /**
+   * Clears this tree.
+   */
+  public void clear() {
+    rootNode = new QuadNode(rootNode.getBoundary(), rootNode.getMaxPerCell());
+  }
+
+  /**
    * Returns all points within the boundary.
    *
    * @param boundary the boundary

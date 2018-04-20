@@ -161,6 +161,15 @@ public class QuadNode {
     return new QuadNode[]{northEast, southEast, southWest, northWest};
   }
 
+  /**
+   * The maximum amount of points per cell.
+   *
+   * @return the maximum amount of points in a cell
+   */
+  public int getMaxPerCell() {
+    return maxPerCell;
+  }
+
   @Override
   public String toString() {
     return "QuadNode{" +
