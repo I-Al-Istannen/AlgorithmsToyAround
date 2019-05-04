@@ -14,6 +14,8 @@ import org.abego.treelayout.TreeLayout;
  */
 public class TreeComponent extends Canvas {
 
+  private static final Color LINE_COLOR = Color.ROYALBLUE;
+  private static final Color TEXT_COLOR = Color.TOMATO;
   private TreeLayout<Tree> layout;
 
   public TreeComponent(TreeLayout<Tree> layout) {
@@ -51,6 +53,8 @@ public class TreeComponent extends Canvas {
       double x = bounds.getCenterX();
       double y = bounds.getMaxY();
 
+      getGraphicsContext2D().setStroke(LINE_COLOR);
+
       for (Tree child : getChildren(tree)) {
         Rectangle2D.Double childBounds = layout.getNodeBounds().get(child);
         double childX = childBounds.getCenterX();
@@ -65,11 +69,20 @@ public class TreeComponent extends Canvas {
     Rectangle2D.Double bounds = layout.getNodeBounds().get(tree);
     double minX = bounds.getMinX();
     double minY = bounds.getMinY();
-    getGraphicsContext2D().strokeOval(
-        minX, minY, bounds.getWidth(), bounds.getHeight()
+
+    getGraphicsContext2D().setStroke(LINE_COLOR);
+    getGraphicsContext2D().strokeRoundRect(
+        minX, minY, bounds.getWidth(), bounds.getHeight(),
+        bounds.getWidth() * 20 / 100,
+        bounds.getHeight() * 20 / 100
     );
+//    getGraphicsContext2D().strokeOval(
+//        minX, minY, bounds.getWidth(), bounds.getHeight()
+//    );
     getGraphicsContext2D().setTextAlign(TextAlignment.CENTER);
     getGraphicsContext2D().setTextBaseline(VPos.CENTER);
+
+    getGraphicsContext2D().setStroke(TEXT_COLOR);
     getGraphicsContext2D().strokeText(
         tree.getToken().getTokenText(),
         bounds.getCenterX(), bounds.getCenterY()

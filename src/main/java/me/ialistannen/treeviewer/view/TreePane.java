@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.text.Text;
 import me.ialistannen.treeviewer.model.Tree;
 import org.abego.treelayout.NodeExtentProvider;
 import org.abego.treelayout.TreeLayout;
@@ -38,12 +39,14 @@ public class TreePane extends ScrollPane {
     NodeExtentProvider<Tree> nodeExtentProvider = new NodeExtentProvider<Tree>() {
       @Override
       public double getWidth(Tree tree) {
-        return 70;
+        return new Text(tree.getToken().getTokenText()).getLayoutBounds().getWidth() + 30;
+//        return 70;
       }
 
       @Override
       public double getHeight(Tree tree) {
-        return 70;
+//        return 70;
+        return new Text(tree.getToken().getTokenText()).getLayoutBounds().getHeight() + 30;
       }
     };
 
