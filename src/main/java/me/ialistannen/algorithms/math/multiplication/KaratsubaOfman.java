@@ -20,11 +20,11 @@ public class KaratsubaOfman extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    Tree tree = komMultTree(1242, 3163, null);
-//    Tree tree = komMultTree(12345, 5678, null);
+//    Tree tree = komMultTree(1242, 3163, null);
+    Tree tree = komMultTree(12345, 5678, null);
 //    Tree tree = komMultTree(5356, 1313, null);
 
-    primaryStage.setScene(new Scene(new TreePane(tree, Font.font("monospace", 15))));
+    primaryStage.setScene(new Scene(new TreePane(tree, Font.font("monospace", 20))));
     primaryStage.sizeToScene();
     primaryStage.centerOnScreen();
     primaryStage.show();
@@ -156,12 +156,6 @@ public class KaratsubaOfman extends Application {
           .collect(Collectors.toList());
     }
 
-    private boolean hasTrivialChild() {
-      return !children.isEmpty() && children.stream()
-          .map(tree -> (KomTreeNode) tree)
-          .anyMatch(KomTreeNode::isTrivial);
-    }
-
     private boolean isTrivial() {
       return a < 10 && b < 10;
     }
@@ -174,25 +168,21 @@ public class KaratsubaOfman extends Application {
       return new Token() {
         @Override
         public String getTokenText() {
-          String result = String.format("%2d * %-2d = %2d", a, b, value);
+          String result = equationToString();
 
-          if (hasTrivialChild()) {
-            int width = children.stream()
-                .flatMapToInt(tree -> Arrays.stream(tree.getToken().getTokenText().split("\n"))
-                    .mapToInt(String::length))
-                .max()
-                .orElse(0);
-            if (width != 0) {
-              result += "\n";
-            }
-            for (int i = 0; i < width; i++) {
-              result += "-";
-            }
-            for (Tree child : children) {
-              if (((KomTreeNode) child).isTrivial()) {
-                result += "\n" + child.getToken().getTokenText();
-              }
-            }
+          int width = children.stream()
+              .flatMapToInt(tree -> Arrays.stream(tree.getToken().getTokenText().split("\n"))
+                  .mapToInt(String::length))
+              .max()
+              .orElse(0);
+          if (width != 0) {
+            result += "\n";
+          }
+          for (int i = 0; i < width; i++) {
+            result += "-";
+          }
+          for (Tree child : children) {
+            result += "\n" + ((KomTreeNode) child).equationToString();
           }
 
           return result;
@@ -208,6 +198,10 @@ public class KaratsubaOfman extends Application {
           return value;
         }
       };
+    }
+
+    private String equationToString() {
+      return String.format("%4d * %-4d = %4d", a, b, value);
     }
 
     /**
