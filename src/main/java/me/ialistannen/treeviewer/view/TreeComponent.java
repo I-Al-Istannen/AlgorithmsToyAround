@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import me.ialistannen.treeviewer.model.Tree;
 import org.abego.treelayout.TreeForTreeLayout;
@@ -18,14 +19,17 @@ public class TreeComponent extends Canvas {
   private static final Color TEXT_COLOR = Color.TOMATO;
   private TreeLayout<Tree> layout;
 
-  public TreeComponent(TreeLayout<Tree> layout) {
+  public TreeComponent(TreeLayout<Tree> layout, Font font) {
     this.layout = layout;
 
-    setWidth(400);
-    setHeight(400);
     getGraphicsContext2D().setStroke(Color.BLACK);
+    getGraphicsContext2D().setFont(font);
 
     draw();
+  }
+
+  public TreeComponent(TreeLayout<Tree> layout) {
+    this(layout, Font.getDefault());
   }
 
   /**
@@ -76,14 +80,12 @@ public class TreeComponent extends Canvas {
         bounds.getWidth() * 20 / 100,
         bounds.getHeight() * 20 / 100
     );
-//    getGraphicsContext2D().strokeOval(
-//        minX, minY, bounds.getWidth(), bounds.getHeight()
-//    );
+
     getGraphicsContext2D().setTextAlign(TextAlignment.CENTER);
     getGraphicsContext2D().setTextBaseline(VPos.CENTER);
 
-    getGraphicsContext2D().setStroke(TEXT_COLOR);
-    getGraphicsContext2D().strokeText(
+    getGraphicsContext2D().setFill(TEXT_COLOR);
+    getGraphicsContext2D().fillText(
         tree.getToken().getTokenText(),
         bounds.getCenterX(), bounds.getCenterY()
     );

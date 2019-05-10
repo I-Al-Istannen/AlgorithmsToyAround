@@ -3,10 +3,13 @@ package me.ialistannen.algorithms.math.multiplication;
 import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import me.ialistannen.algorithms.math.parser.token.Token;
 import me.ialistannen.algorithms.math.parser.token.TokenType;
@@ -17,17 +20,19 @@ public class KaratsubaOfman extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    Tree tree = komMultTree(12345, 5678, null);
+    Tree tree = komMultTree(1242, 3163, null);
+//    Tree tree = komMultTree(12345, 5678, null);
 //    Tree tree = komMultTree(5356, 1313, null);
 
-    primaryStage.setScene(new Scene(new TreePane(tree)));
+    primaryStage.setScene(new Scene(new TreePane(tree, Font.font("monospace", 15))));
     primaryStage.sizeToScene();
     primaryStage.centerOnScreen();
     primaryStage.show();
   }
 
   public static void main(String[] args) {
-    mult(12345, 5678);
+//    mult(12345, 5678);
+    mult(1242, 3136);
     launch(args);
   }
 
@@ -94,14 +99,14 @@ public class KaratsubaOfman extends Application {
     Tree upperTree = komMultTree(aUpper, bUpper, resultTree);
     int upperCombined = (int) upperTree.evaluate();
 
-    Tree innerTree = komMultTree(aUpper + aLower, bUpper + bLower, resultTree);
+    Tree innerTree = komMultTree(aLower + aUpper, bLower + bUpper, resultTree);
     int innerProduct = (int) (innerTree.evaluate() - upperCombined - lowerCombined);
 
     int value = (int) (upperCombined * Math.pow(10, 2 * k) + innerProduct * Math.pow(10, k)
         + lowerCombined);
 
-    resultTree.children.add(lowerTree);
     resultTree.children.add(upperTree);
+    resultTree.children.add(lowerTree);
     resultTree.children.add(innerTree);
     resultTree.setValue(value);
     return resultTree;
@@ -145,7 +150,20 @@ public class KaratsubaOfman extends Application {
      */
     @Override
     public List<? extends Tree> getChildren() {
-      return children;
+      return children.stream()
+          .map(tree -> (KomTreeNode) tree)
+          .filter(tree -> !tree.isTrivial())
+          .collect(Collectors.toList());
+    }
+
+    private boolean hasTrivialChild() {
+      return !children.isEmpty() && children.stream()
+          .map(tree -> (KomTreeNode) tree)
+          .anyMatch(KomTreeNode::isTrivial);
+    }
+
+    private boolean isTrivial() {
+      return a < 10 && b < 10;
     }
 
     /**
@@ -156,7 +174,28 @@ public class KaratsubaOfman extends Application {
       return new Token() {
         @Override
         public String getTokenText() {
-          return a + " * " + b + " = " + value;
+          String result = String.format("%2d * %-2d = %2d", a, b, value);
+
+          if (hasTrivialChild()) {
+            int width = children.stream()
+                .flatMapToInt(tree -> Arrays.stream(tree.getToken().getTokenText().split("\n"))
+                    .mapToInt(String::length))
+                .max()
+                .orElse(0);
+            if (width != 0) {
+              result += "\n";
+            }
+            for (int i = 0; i < width; i++) {
+              result += "-";
+            }
+            for (Tree child : children) {
+              if (((KomTreeNode) child).isTrivial()) {
+                result += "\n" + child.getToken().getTokenText();
+              }
+            }
+          }
+
+          return result;
         }
 
         @Override
