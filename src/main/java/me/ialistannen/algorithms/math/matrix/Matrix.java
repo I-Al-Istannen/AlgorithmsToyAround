@@ -87,7 +87,7 @@ public class Matrix {
    * Multiplies this matrix with the given one.
    *
    * @param other the other matrix
-   * @return this matrix
+   * @return the new matrix
    * @throws IllegalArgumentException if the dimensions do not match
    */
   public Matrix multiply(Matrix other) {
@@ -95,17 +95,18 @@ public class Matrix {
       throw new IllegalArgumentException("Dimensions do not match");
     }
 
+    Matrix zero = zero(other.getColumns(), this.getRows());
     for (int x = 0; x < getColumns(); x++) {
       for (int y = 0; y < getRows(); y++) {
         double accumulated = 0;
         for (int delta = 0; delta < getColumns(); delta++) {
           accumulated += get(delta, y) * other.get(x, delta);
         }
-        set(x, y, accumulated);
+        zero.set(x, y, accumulated);
       }
     }
 
-    return this;
+    return zero;
   }
 
   /**
@@ -119,44 +120,6 @@ public class Matrix {
       for (int y = 0; y < getRows(); y++) {
         set(x, y, get(x, y) * scalar);
       }
-    }
-
-    return this;
-  }
-
-  /**
-   * Adds the given row (a matrix with a height of one) to this matrix.
-   *
-   * @param rowToAdd the row to add
-   * @param rowIndex the row to add it to. Zero indexed.
-   * @return this matrix
-   */
-  public Matrix addRow(Matrix rowToAdd, int rowIndex) {
-    if (rowToAdd.getColumns() != getColumns()) {
-      throw new IllegalArgumentException("Dimension mismatch");
-    }
-
-    for (int i = 0; i < rowToAdd.getColumns(); i++) {
-      set(i, rowIndex, get(i, rowIndex) + rowToAdd.get(i, 0));
-    }
-
-    return this;
-  }
-
-  /**
-   * Adds the given column (a matrix with a width of one) to this matrix.
-   *
-   * @param columnToAdd the column to add
-   * @param columnIndex the column to add it to. Zero indexed.
-   * @return this matrix
-   */
-  public Matrix addColumn(Matrix columnToAdd, int columnIndex) {
-    if (columnToAdd.getRows() != getRows()) {
-      throw new IllegalArgumentException("Dimension mismatch");
-    }
-
-    for (int i = 0; i < columnToAdd.getRows(); i++) {
-      set(columnIndex, i, get(columnIndex, i) + columnToAdd.get(0, i));
     }
 
     return this;
@@ -450,11 +413,22 @@ public class Matrix {
 //
 //    System.out.println(matrix.gaussianElimination());
 
-    System.out.println();
-    System.out.println(fromValues(new double[][]{
-        {1, 0, 3},
-        {0, 4, 0},
-        {5, 0, 0}
-    }).calculateInverse());
+    Matrix s = fromValues(new double[][]{
+        {1, -2, 1},
+        {1, -4, 0},
+        {2, -6, -1}
+    });
+    Matrix sInv = s.calculateInverse();
+
+    System.out.println(s);
+    System.out.println(sInv);
+    Matrix a = fromValues(new double[][]{
+        {1, -3, 2},
+        {-1, -3, 3},
+        {-1, -7, 6}
+    });
+    System.out.println(a);
+
+    System.out.println(sInv.multiply(a).multiply(s));
   }
 }
