@@ -86,15 +86,25 @@ public class DummySinglyLinked<E> extends AbstractList<E> {
             + " (node " + getNode(collisionPosition).value + ")"
     );
 
-    int errorPos = collisionPosition;
-    Node current = getNode(errorPos);
-    int cycleLength = getCycleLength(current);
-
+    int cycleLength = getCycleLength(getNode(collisionPosition));
     System.out.println("Cycle length is: " + cycleLength);
 
-    while (reachesSelf(current, cycleLength)) {
-      System.out.println("I could reach myself from " + current.value);
-      errorPos--;
+    int leftBound = 0;
+    int rightBound = collisionPosition;
+    int errorPos = (leftBound + rightBound) / 2;
+
+    Node current = getNode(errorPos);
+
+    while (leftBound <= rightBound) {
+      if (reachesSelf(current, cycleLength)) {
+        System.out.println("I could reach myself from " + current.value + " (" + errorPos + ")");
+        rightBound = errorPos - 1;
+        errorPos = (rightBound + leftBound) / 2;
+      } else {
+        System.out.println("I couldn't reach myself from " + current.value + " (" + errorPos + ")");
+        leftBound = errorPos + 1;
+        errorPos = (rightBound + leftBound) / 2;
+      }
       current = getNode(errorPos);
     }
 
@@ -220,7 +230,7 @@ public class DummySinglyLinked<E> extends AbstractList<E> {
     System.out.println(list);
     System.out.println(list.dummy);
     System.out.println();
-    DummySinglyLinked<Integer> links = withLinks(-1, 1, 2, 3, 4, 5, 6, 7, -1);
+    DummySinglyLinked<Integer> links = withLinks(-1, 1, 2, 3, 4, 5, 6, 7, 3);
 //    System.out.println(links);
     System.out.println(links.findCycle());
   }
