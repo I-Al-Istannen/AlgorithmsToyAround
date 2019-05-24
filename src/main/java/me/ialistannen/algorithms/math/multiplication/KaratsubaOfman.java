@@ -21,7 +21,7 @@ public class KaratsubaOfman extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
 //    Tree tree = komMultTree(1242, 3163, null);
-    Tree tree = komMultTree(12345, 5678, null);
+    Tree tree = komMultTree(12345, 6789, null);
 //    Tree tree = komMultTree(5356, 1313, null);
 
     primaryStage.setScene(new Scene(new TreePane(tree, Font.font("monospace", 20))));
