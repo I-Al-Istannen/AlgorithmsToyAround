@@ -3,7 +3,6 @@ package me.ialistannen.collections.list;
 import java.util.AbstractList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 public class DummySinglyLinked<E> extends AbstractList<E> {
 
@@ -76,92 +75,27 @@ public class DummySinglyLinked<E> extends AbstractList<E> {
    *     element.
    */
   private int findCycle() {
-    int collisionPosition = executeFloyds(dummy);
-
-    if (collisionPosition < 0) {
-      return collisionPosition;
-    }
-    System.out.println(
-        "Collision was at " + collisionPosition
-            + " (node " + getNode(collisionPosition).value + ")"
-    );
-
-    int cycleLength = getCycleLength(getNode(collisionPosition));
-    System.out.println("Cycle length is: " + cycleLength);
-
-    int leftBound = 0;
-    int rightBound = collisionPosition;
-    int errorPos = (leftBound + rightBound) / 2;
-
-    Node current = getNode(errorPos);
-
-    while (leftBound <= rightBound) {
-      if (reachesSelf(current, cycleLength)) {
-        System.out.println("I could reach myself from " + current.value + " (" + errorPos + ")");
-        rightBound = errorPos - 1;
-        errorPos = (rightBound + leftBound) / 2;
-      } else {
-        System.out.println("I couldn't reach myself from " + current.value + " (" + errorPos + ")");
-        leftBound = errorPos + 1;
-        errorPos = (rightBound + leftBound) / 2;
-      }
-      current = getNode(errorPos);
-    }
-
-    System.out.println("Error is at value: " + current.next.value);
-
-    // does not count the dummy element
-    return errorPos;
-  }
-
-  private int getCycleLength(Node start) {
-    Node current = start.next;
-
     int count = 0;
-    while (current != start) {
-      count++;
-      current = current.next;
-    }
-    return count + 1;
-  }
 
-  private boolean reachesSelf(Node start, int distance) {
-    Node current = start;
-    for (int i = 0; i < distance; i++) {
-      current = current.next;
-      if (current == start) {
-        return true;
+    Node harePointer = dummy;
+    Node tortoisePointer = dummy;
+
+    do {
+      if (harePointer.next == dummy || harePointer.next.next == dummy) {
+        return -1;
       }
-    }
-    return false;
-  }
+      harePointer = harePointer.next.next;
+      tortoisePointer = tortoisePointer.next;
+    } while (harePointer != tortoisePointer);
 
-  private Node getNode(int distance) {
-    Node current = dummy;
-    for (int i = 0; i < distance; i++) {
-      current = current.next;
-    }
-    return current;
-  }
+    harePointer = dummy;
 
-  private int executeFloyds(Node start) {
-    Function<Node, Node> hare = node -> node.next.next;
-    Function<Node, Node> tortoise = node -> node.next;
-
-    int count = 1;
-    Node harePointer = hare.apply(start);
-    Node tortoisePointer = tortoise.apply(start);
-    for (int i = 0; i < 100; i++) {
-      if (harePointer == tortoisePointer) {
-        break;
-      }
-      harePointer = hare.apply(harePointer);
-      tortoisePointer = tortoise.apply(tortoisePointer);
+    while (tortoisePointer != harePointer) {
+      tortoisePointer = tortoisePointer.next;
+      harePointer = harePointer.next;
       count++;
     }
-    if (harePointer == dummy) {
-      return -1;
-    }
+
     return count;
   }
 
@@ -230,8 +164,7 @@ public class DummySinglyLinked<E> extends AbstractList<E> {
     System.out.println(list);
     System.out.println(list.dummy);
     System.out.println();
-    DummySinglyLinked<Integer> links = withLinks(-1, 1, 2, 3, 4, 5, 6, 7, 3);
-//    System.out.println(links);
+    DummySinglyLinked<Integer> links = withLinks(-1, 1, 2, 3, 4, 5, 6, 10, -1);
     System.out.println(links.findCycle());
   }
 }
