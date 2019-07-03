@@ -14,7 +14,6 @@ import javafx.util.Duration;
 import me.ialistannen.algorithms.layout.forcedbased.forces.BlackHoleAttractionForce;
 import me.ialistannen.algorithms.layout.forcedbased.forces.ElectricalRepulsionForce;
 import me.ialistannen.algorithms.layout.forcedbased.forces.SpringAttractionForce;
-import me.ialistannen.algorithms.layout.forcedbased.normalizing.NodePositionNormalizer;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
 import me.ialistannen.algorithms.layout.forcedbased.view.GraphView;
 
@@ -33,10 +32,9 @@ public class Test extends Application {
             new ElectricalRepulsionForce(1e5),
             new SpringAttractionForce(50, 0.1),
             new BlackHoleAttractionForce(new Vector2D(200, 200), 9.81e3)
-        ),
-        10_000,
-//        new ClampToRectangleNormalizer(20, 400, 20, 400));
-        NodePositionNormalizer.nop());
+        )
+//        , new ClampToRectangleNormalizer(20, 400, 20, 400));
+    );
 
     int delay = 50;
     Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {

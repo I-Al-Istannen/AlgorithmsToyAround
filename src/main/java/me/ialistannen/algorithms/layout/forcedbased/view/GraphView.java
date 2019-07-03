@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
+import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Edge;
 import me.ialistannen.algorithms.layout.forcedbased.tree.EdgeTraversal;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
@@ -47,6 +48,19 @@ public class GraphView<T> extends FlowPane {
 
     connectionLines(circles)
         .forEach(it -> linePane.getChildren().add(it));
+
+    DragInteractionManager<T> dragInteractionManager = new DragInteractionManager<>();
+
+    circles
+        .forEach(dragInteractionManager::registerCircleDragAndDrop);
+
+    setOnMouseDragged(event -> dragInteractionManager.executeIfDragging((circle, startPos) -> {
+      Vector2D currentPos = new Vector2D(event.getX(), event.getY());
+
+      Vector2D direction = currentPos.subtract(startPos);
+
+      circle.getNode().setActingForce(direction);
+    }));
   }
 
   private List<ConnectionLine<T>> connectionLines(List<NodeCircle<T>> nodes) {

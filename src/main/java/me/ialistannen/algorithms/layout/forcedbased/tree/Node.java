@@ -16,6 +16,7 @@ public class Node<T> {
   private Vector2D position;
 
   private Set<Node<T>> neighbours;
+  private boolean pausePhysics;
 
   /**
    * Creates a new node.
@@ -104,4 +105,21 @@ public class Node<T> {
     return neighbours.contains(other);
   }
 
+  /**
+   * Returns whether physics should be calculated for this node.
+   *
+   * @return true if physics should be calculated for this node
+   */
+  public boolean isPausePhysics() {
+    return pausePhysics;
+  }
+
+  /**
+   * Sets whether physics should be calculated for this node.
+   *
+   * @param pausePhysics true if physics should be calculated for this node
+   */
+  public void setPausePhysics(boolean pausePhysics) {
+    this.pausePhysics = pausePhysics;
+  }
 }
