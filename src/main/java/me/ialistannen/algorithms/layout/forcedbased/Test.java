@@ -32,8 +32,8 @@ public class Test extends Application {
             new ElectricalRepulsionForce(1e5),
             new SpringAttractionForce(50, 0.1),
             new BlackHoleAttractionForce(new Vector2D(200, 200), 9.81e3)
-        )
-//        , new ClampToRectangleNormalizer(20, 400, 20, 400));
+        ),
+        0.5
     );
 
     int delay = 50;
@@ -51,6 +51,12 @@ public class Test extends Application {
     primaryStage.setHeight(500);
     primaryStage.centerOnScreen();
     primaryStage.show();
+
+    primaryStage.getScene().setOnKeyPressed(event -> {
+      if (event.getText().equals("R")) {
+        randomizeLocation(400, 400, nodes);
+      }
+    });
   }
 
   private List<Node<String>> getNodes(int maxX, int maxY) {
@@ -75,14 +81,18 @@ public class Test extends Application {
     g.addConnection(f);
 
     List<Node<String>> nodes = Arrays.asList(a, b, c, d, e, f, g);
+    randomizeLocation(maxX, maxY, nodes);
+    return nodes;
+  }
+
+  private void randomizeLocation(int maxX, int maxY, List<Node<String>> nodes) {
     for (Node<String> node : nodes) {
-      Vector2D newPos = node.getPosition().add(
+      Vector2D newPos = new Vector2D(
           ThreadLocalRandom.current().nextDouble(maxX),
           ThreadLocalRandom.current().nextDouble(maxY)
       );
       node.setPosition(newPos);
     }
-    return nodes;
   }
 
   public static void main(String[] args) {

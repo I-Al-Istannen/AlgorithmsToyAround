@@ -15,6 +15,7 @@ public class LayoutManager<T> implements Runnable {
   private List<Node<T>> nodes;
   private List<ForceActor> forces;
   private NodePositionNormalizer nodePositionNormalizer;
+  private double dampeningFactor;
 
   /**
    * Creates a new layout manager.
@@ -22,12 +23,14 @@ public class LayoutManager<T> implements Runnable {
    * @param nodes the nodes to layout
    * @param forces the forces to apply
    * @param nodePositionNormalizer the normalizer for node positions
+   * @param dampeningFactor the velocity dampening factor
    */
   public LayoutManager(List<Node<T>> nodes, List<ForceActor> forces,
-      NodePositionNormalizer nodePositionNormalizer) {
+      NodePositionNormalizer nodePositionNormalizer, double dampeningFactor) {
     this.nodes = new ArrayList<>(nodes);
     this.forces = new ArrayList<>(forces);
     this.nodePositionNormalizer = nodePositionNormalizer;
+    this.dampeningFactor = dampeningFactor;
   }
 
   /**
@@ -37,9 +40,10 @@ public class LayoutManager<T> implements Runnable {
    *
    * @param nodes the nodes to layout
    * @param forces the forces to apply
+   * @param dampeningFactor the velocity dampening factor
    */
-  public LayoutManager(List<Node<T>> nodes, List<ForceActor> forces) {
-    this(nodes, forces, NodePositionNormalizer.nop());
+  public LayoutManager(List<Node<T>> nodes, List<ForceActor> forces, double dampeningFactor) {
+    this(nodes, forces, NodePositionNormalizer.nop(), dampeningFactor);
   }
 
   @Override
@@ -58,7 +62,7 @@ public class LayoutManager<T> implements Runnable {
       node.setPosition(resultPos);
 
       // dampening
-      node.setActingForce(node.getActingForce().multiply(0.1));
+      node.setActingForce(node.getActingForce().multiply(dampeningFactor));
     }
   }
 
