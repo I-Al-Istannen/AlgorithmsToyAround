@@ -133,6 +133,16 @@ public class Vector2D {
   }
 
   /**
+   * Returns the manhatten distance to the other vector.
+   *
+   * @param other the other vector
+   * @return the distance
+   */
+  public double manhattenTo(Vector2D other) {
+    return Math.abs(other.getX() - getX()) + Math.abs(other.getY() - getY());
+  }
+
+  /**
    * Returns the length of this vector.
    *
    * @return the length of this vector.

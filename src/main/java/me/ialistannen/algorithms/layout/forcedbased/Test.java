@@ -13,9 +13,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import me.ialistannen.algorithms.layout.forcedbased.forces.BlackHoleAttractionForce;
 import me.ialistannen.algorithms.layout.forcedbased.forces.ElectricalRepulsionForce;
 import me.ialistannen.algorithms.layout.forcedbased.forces.SpringAttractionForce;
-import me.ialistannen.algorithms.layout.forcedbased.normalizing.ClampToRectangleNormalizer;
+import me.ialistannen.algorithms.layout.forcedbased.normalizing.NodePositionNormalizer;
 import me.ialistannen.algorithms.layout.forcedbased.view.NodeCircle;
 
 public class Test extends Application {
@@ -33,28 +34,26 @@ public class Test extends Application {
 
     circles.forEach(circle -> container.getChildren().add(circle));
 
-    int delay = 500;
-    Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {
-      circles.forEach(NodeCircle::update);
-    }));
-    timeline.setCycleCount(Animation.INDEFINITE);
-    timeline.play();
-
     root.setCenter(container);
 
     LayoutManager<String> layoutManager = new LayoutManager<>(
         nodes,
         Arrays.asList(
             new ElectricalRepulsionForce(1e5),
-            new SpringAttractionForce(100, 0.1)
+            new SpringAttractionForce(50, 0.1),
+            new BlackHoleAttractionForce(new Vector2D(200, 200), 9.81e3)
         ),
         10_000,
-        java.time.Duration.ofMillis(delay),
-        new ClampToRectangleNormalizer(20, 400, 20, 400));
-//        NodePositionNormalizer.nop());
-    Thread thread = new Thread(layoutManager);
-    thread.setDaemon(true);
-    thread.start();
+//        new ClampToRectangleNormalizer(20, 400, 20, 400));
+        NodePositionNormalizer.nop());
+
+    int delay = 50;
+    Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {
+      layoutManager.run();
+      circles.forEach(NodeCircle::update);
+    }));
+    timeline.setCycleCount(Animation.INDEFINITE);
+    timeline.play();
 
     primaryStage.setScene(new Scene(root));
     primaryStage.setWidth(500);
@@ -81,8 +80,8 @@ public class Test extends Application {
     d.addConnection(e);
     e.addConnection(f);
 
-//    g.addConnection(a);
-//    g.addConnection(f);
+    g.addConnection(a);
+    g.addConnection(f);
 
     List<Node<String>> nodes = Arrays.asList(a, b, c, d, e, f, g);
     for (Node<String> node : nodes) {
