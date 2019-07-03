@@ -3,13 +3,11 @@ package me.ialistannen.algorithms.layout.forcedbased;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -17,7 +15,8 @@ import me.ialistannen.algorithms.layout.forcedbased.forces.BlackHoleAttractionFo
 import me.ialistannen.algorithms.layout.forcedbased.forces.ElectricalRepulsionForce;
 import me.ialistannen.algorithms.layout.forcedbased.forces.SpringAttractionForce;
 import me.ialistannen.algorithms.layout.forcedbased.normalizing.NodePositionNormalizer;
-import me.ialistannen.algorithms.layout.forcedbased.view.NodeCircle;
+import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
+import me.ialistannen.algorithms.layout.forcedbased.view.GraphView;
 
 public class Test extends Application {
 
@@ -25,16 +24,8 @@ public class Test extends Application {
   public void start(Stage primaryStage) {
     BorderPane root = new BorderPane();
 
-    AnchorPane container = new AnchorPane();
-
     List<Node<String>> nodes = getNodes(500, 500);
-    List<NodeCircle<String>> circles = nodes.stream()
-        .map(NodeCircle::new)
-        .collect(Collectors.toList());
-
-    circles.forEach(circle -> container.getChildren().add(circle));
-
-    root.setCenter(container);
+    GraphView<String> graphView = new GraphView<>(nodes);
 
     LayoutManager<String> layoutManager = new LayoutManager<>(
         nodes,
@@ -50,10 +41,12 @@ public class Test extends Application {
     int delay = 50;
     Timeline timeline = new Timeline(new KeyFrame(Duration.millis(delay), event -> {
       layoutManager.run();
-      circles.forEach(NodeCircle::update);
+      graphView.update();
     }));
     timeline.setCycleCount(Animation.INDEFINITE);
     timeline.play();
+
+    root.setCenter(graphView);
 
     primaryStage.setScene(new Scene(root));
     primaryStage.setWidth(500);

@@ -3,6 +3,7 @@ package me.ialistannen.algorithms.layout.forcedbased;
 import java.util.ArrayList;
 import java.util.List;
 import me.ialistannen.algorithms.layout.forcedbased.normalizing.NodePositionNormalizer;
+import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
 
 public class LayoutManager<T> implements Runnable {
 

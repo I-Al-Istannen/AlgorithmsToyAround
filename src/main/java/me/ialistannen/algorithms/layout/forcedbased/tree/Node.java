@@ -1,7 +1,8 @@
-package me.ialistannen.algorithms.layout.forcedbased;
+package me.ialistannen.algorithms.layout.forcedbased.tree;
 
 import java.util.HashSet;
 import java.util.Set;
+import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 
 /**
  * A node!

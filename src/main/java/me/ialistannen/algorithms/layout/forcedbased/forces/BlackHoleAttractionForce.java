@@ -1,8 +1,8 @@
 package me.ialistannen.algorithms.layout.forcedbased.forces;
 
 import me.ialistannen.algorithms.layout.forcedbased.ForceActor;
-import me.ialistannen.algorithms.layout.forcedbased.Node;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
+import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
 
 /**
  * A simple attraction to a given center point.

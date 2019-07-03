@@ -1,5 +1,7 @@
 package me.ialistannen.algorithms.layout.forcedbased;
 
+import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
+
 /**
  * Some actor that applies a force to some nodes.
  */
