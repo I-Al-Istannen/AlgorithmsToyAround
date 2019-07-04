@@ -1,7 +1,9 @@
 package me.ialistannen.algorithms.layout.forcedbased.view;
 
+import javafx.beans.binding.Bindings;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 
 /**
  * A line connecting two nodes.
@@ -27,5 +29,16 @@ public class ConnectionLine<T> extends Pane {
     line.endYProperty().bind(end.centerYProperty());
 
     getChildren().add(line);
+
+    ArrowTest arrowTest = new ArrowTest(Bindings.createObjectBinding(
+        () -> new Vector2D(
+            line.getEndX() - line.getStartX(),
+            line.getEndY() - line.getStartY()
+        ),
+        line.startXProperty(), line.startYProperty(), line.endXProperty(), line.endYProperty()
+    ));
+    getChildren().add(arrowTest);
+    arrowTest.translateXProperty().bind(line.endXProperty());
+    arrowTest.translateYProperty().bind(line.endYProperty());
   }
 }

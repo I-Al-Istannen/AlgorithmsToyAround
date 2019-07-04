@@ -35,6 +35,10 @@ public class Edge<T> {
       return false;
     }
     Edge<?> edge = (Edge<?>) o;
+    if (bidirectional && edge.bidirectional) {
+      return Objects.equals(start, edge.start) && Objects.equals(end, edge.end)
+          || Objects.equals(end, edge.start) && Objects.equals(start, edge.end);
+    }
     return bidirectional == edge.bidirectional &&
         Objects.equals(start, edge.start) &&
         Objects.equals(end, edge.end);
@@ -42,6 +46,19 @@ public class Edge<T> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(start, end, bidirectional);
+    if (start.getPosition().getLengthSquared() < end.getPosition().getLengthSquared()) {
+      return Objects.hash(start, end, bidirectional);
+    } else {
+      return Objects.hash(end, start, bidirectional);
+    }
+  }
+
+  @Override
+  public String toString() {
+    return "Edge{" +
+        "start=" + start +
+        ", end=" + end +
+        ", bidirectional=" + bidirectional +
+        '}';
   }
 }
