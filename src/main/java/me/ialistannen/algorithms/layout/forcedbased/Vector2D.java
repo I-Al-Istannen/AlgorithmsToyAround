@@ -171,6 +171,20 @@ public class Vector2D {
     return getX() * getX() + getY() * getY();
   }
 
+  /**
+   * Returns the absolute value of this vector. Applies {@link Math#abs(int)} to each component.
+   *
+   * @return the absolute vector
+   */
+  public Vector2D abs() {
+    if (x >= 0 && y >= 0) {
+      return this;
+    }
+    return new Vector2D(
+        Math.abs(x), Math.abs(y)
+    );
+  }
+
   @Override
   public String toString() {
     return String.format("Vector2D{x=%.2f, y=%.2f}", x, y);

@@ -25,7 +25,7 @@ public class BlackHoleAttractionForce implements ForceActor {
 
   @Override
   public void apply(Node a, Node b) {
-    double distanceSquared = a.getPosition().manhattenTo(center);
+    double distanceSquared = a.getPosition().chebyshevDistanceTo(center);
     distanceSquared *= distanceSquared;
 
     // Inverse gravitation. Nearly discovered Anti-gravity but fell short :(
