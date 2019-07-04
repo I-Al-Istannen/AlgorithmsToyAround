@@ -1,16 +1,17 @@
 package me.ialistannen.algorithms.layout.forcedbased.view;
 
-import javafx.application.Platform;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.geometry.Pos;
+import javafx.beans.value.ChangeListener;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.GridPane;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
 
@@ -19,12 +20,26 @@ import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
  *
  * @param <T> the type of the stored value
  */
-public class NodeCircle<T> extends StackPane {
+public class NodeCircle<T> extends GridPane {
 
   private final Node<T> node;
-  private final Label label;
-
   private DoubleProperty radiusProperty;
+
+  @FXML
+  private Label title;
+
+  @FXML
+  private Label leftText;
+
+  @FXML
+  private Label rightText;
+
+  @FXML
+  private Separator titleSeparator;
+
+  @FXML
+  private Separator childTextSeparator;
+
 
   /**
    * Creates a new node circle for the given node.
@@ -33,32 +48,61 @@ public class NodeCircle<T> extends StackPane {
    */
   public NodeCircle(Node<T> node) {
     this.node = node;
-    this.radiusProperty = new SimpleDoubleProperty();
 
-    getStylesheets().add("/css/nodelayout/NodeCircle.css");
+    FXMLLoader loader = new FXMLLoader(
+        getClass().getResource("/fxml/nodelayout/NodeCircle.fxml")
+    );
+    loader.setRoot(this);
+    loader.setController(this);
+    try {
+      loader.load();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
 
-    label = new Label(node.getValue().toString());
-    label.setFont(Font.font("monospace", FontWeight.BOLD, 16));
-    label.setTextFill(Color.WHITE);
-    StackPane.setAlignment(label, Pos.CENTER);
+    setupRadiusProperty();
 
-    Circle circle = new Circle(label.getWidth(), Color.ROYALBLUE);
-    circle.radiusProperty().bind(label.widthProperty());
+    setText(Objects.toString(node.getValue()));
+    setLeftText("");
+    setRightText("");
 
-    this.getChildren().add(circle);
-    this.getChildren().add(label);
-
-    setMaxWidth(Double.MAX_VALUE);
-    setMaxHeight(Double.MAX_VALUE);
-
-    circle.radiusProperty().addListener((observable, oldValue, newValue) -> {
-      setPrefWidth(newValue.doubleValue() * 2);
-      setPrefHeight(newValue.doubleValue() * 2);
-      requestLayout();
-      Platform.runLater(() -> radiusProperty.setValue(newValue));
-    });
+    setupChildren();
 
     update();
+
+    if (ThreadLocalRandom.current().nextBoolean()) {
+      setRightText("Righty");
+    }
+    if (ThreadLocalRandom.current().nextBoolean()) {
+      setLeftText("Lefty");
+    }
+  }
+
+  private void setupChildren() {
+    leftText.visibleProperty().bind(leftText.textProperty().isNotEmpty());
+    rightText.visibleProperty().bind(rightText.textProperty().isNotEmpty());
+
+    childTextSeparator.visibleProperty().bind(
+        leftText.textProperty().isNotEmpty().and(rightText.textProperty().isNotEmpty())
+    );
+    titleSeparator.visibleProperty().bind(
+        leftText.textProperty().isNotEmpty().or(rightText.textProperty().isNotEmpty())
+    );
+
+    leftText.managedProperty().bind(leftText.visibleProperty());
+    rightText.managedProperty().bind(rightText.visibleProperty());
+    childTextSeparator.managedProperty().bind(childTextSeparator.visibleProperty());
+    titleSeparator.managedProperty().bind(titleSeparator.visibleProperty());
+  }
+
+  private void setupRadiusProperty() {
+    this.radiusProperty = new SimpleDoubleProperty();
+
+    ChangeListener<Number> radiusListener = (observable, oldValue, newValue) ->
+        radiusProperty.set(Math.max(getWidth(), getHeight()) / 2);
+
+    widthProperty().addListener(radiusListener);
+    heightProperty().addListener(radiusListener);
   }
 
   /**
@@ -122,9 +166,32 @@ public class NodeCircle<T> extends StackPane {
    * @param text the text to display
    */
   public void setText(String text) {
-    label.setText(text);
+    title.setText(text);
   }
 
+  /**
+   * Sets the left text of this node.
+   *
+   * @param text the text to display
+   */
+  public void setLeftText(String text) {
+    leftText.setText(text);
+  }
+
+  /**
+   * Sets the right text of this node.
+   *
+   * @param text the text to display
+   */
+  public void setRightText(String text) {
+    rightText.setText(text);
+  }
+
+  /**
+   * Highlights this node.
+   *
+   * @param highlight true if this node should be highlighted
+   */
   public void setHighlight(boolean highlight) {
     getStyleClass().remove("highlighted-node");
 

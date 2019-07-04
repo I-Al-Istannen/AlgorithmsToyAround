@@ -30,7 +30,7 @@ public class Test extends Application {
     LayoutManager<String> layoutManager = new LayoutManager<>(
         nodes,
         Arrays.asList(
-            new ElectricalRepulsionForce(1e5),
+            new ElectricalRepulsionForce(400000),
             new SpringAttractionForce(50, 0.1),
             new BlackHoleAttractionForce(new Vector2D(250, 250), 9.81e3)
         ),

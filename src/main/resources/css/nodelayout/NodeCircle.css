@@ -1,3 +1,17 @@
 .highlighted-node {
   -fx-effect: dropshadow(gaussian, tomato, 20, 0.2, 0, 0);
 }
+
+.circle-title {
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
+}
+
+.sub-text {
+  -fx-text-fill: white;
+}
+
+.root {
+  -fx-background-color: royalblue;
+  -fx-background-radius: 20%;
+}
