@@ -64,7 +64,7 @@ public class Test extends Application {
     List<Node<String>> nodes = new ArrayList<>();
 
     for (int i = 0; i < 12; i++) {
-      Node<String> newNode = new Node<>("" + (char) (i + 'A'));
+      Node<String> newNode = new Node<>(String.format("%s", (char) (i + 'A')));
 
       for (Node<String> node : nodes) {
         if (ThreadLocalRandom.current().nextInt(10) < 4) {

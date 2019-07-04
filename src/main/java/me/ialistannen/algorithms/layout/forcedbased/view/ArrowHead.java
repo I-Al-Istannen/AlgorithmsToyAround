@@ -11,6 +11,8 @@ import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
  */
 public class ArrowHead extends AnchorPane {
 
+  // This must not be garbage collected. Praise the JavaFx overlords and leave it as a field!
+  @SuppressWarnings("FieldCanBeLocal")
   private final ChangeListener<Vector2D> updateListener;
   private Line left;
   private Line right;

@@ -62,7 +62,7 @@ public class NodeCircle<T> extends StackPane {
    * @return the radius of this node
    */
   public double getRadius() {
-    return 10;
+    return getWidth();
   }
 
   /**

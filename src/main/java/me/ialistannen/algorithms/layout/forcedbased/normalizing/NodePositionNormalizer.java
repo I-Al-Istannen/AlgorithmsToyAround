@@ -13,7 +13,7 @@ public interface NodePositionNormalizer {
    * @param position the position
    * @return the resulting position
    */
-  public Vector2D normalize(Vector2D position);
+  Vector2D normalize(Vector2D position);
 
   /**
    * Returns a no-operation normalizer that just returns the input.

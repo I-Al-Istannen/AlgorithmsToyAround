@@ -33,9 +33,8 @@ public class ConnectionLine<T> extends Pane {
   public ConnectionLine(NodeCircle<T> start, NodeCircle<T> end) {
     line = new Line();
 
-    ChangeListener<Object> changeListener = (observable, oldValue, newValue) -> {
-      updateStartEnd(start, end);
-    };
+    ChangeListener<Object> changeListener = (observable, oldValue, newValue) ->
+        updateStartEnd(start, end);
     start.translateXProperty().addListener(changeListener);
     start.translateYProperty().addListener(changeListener);
     end.translateXProperty().addListener(changeListener);

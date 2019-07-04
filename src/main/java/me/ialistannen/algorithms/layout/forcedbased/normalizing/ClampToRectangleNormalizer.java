@@ -2,6 +2,9 @@ package me.ialistannen.algorithms.layout.forcedbased.normalizing;
 
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 
+/**
+ * Clamps a node to stay inside a given rectangle.
+ */
 public class ClampToRectangleNormalizer implements NodePositionNormalizer {
 
   private double minX;
@@ -9,6 +12,14 @@ public class ClampToRectangleNormalizer implements NodePositionNormalizer {
   private double minY;
   private double maxY;
 
+  /**
+   * Creates a new clamp to rectangle normalizer-
+   *
+   * @param minX the rectangle's min x
+   * @param maxX the rectangle's max x
+   * @param minY the rectangle's min y
+   * @param maxY the rectangle's max y
+   */
   public ClampToRectangleNormalizer(double minX, double maxX, double minY, double maxY) {
     this.minX = minX;
     this.maxX = maxX;
