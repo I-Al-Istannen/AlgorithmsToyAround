@@ -3,6 +3,7 @@ package me.ialistannen.algorithms.layout.forcedbased.view;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
@@ -73,20 +74,40 @@ public class ConnectionLine<T> extends Pane {
   }
 
   private void updateStartEnd(NodeCircle<T> start, NodeCircle<T> end) {
-    Vector2D startVec = new Vector2D(
-        start.getCenterX(),
-        start.getCenterY()
-    );
-    Vector2D endVec = new Vector2D(
-        end.getCenterX(),
-        end.getCenterY()
-    );
-    Vector2D delta = endVec.subtract(startVec);
+    // Retrieve bounds
+    Bounds startBounds = start.getBoundsInParent();
+    Bounds endBounds = end.getBoundsInParent();
 
-    Vector2D startPoint = delta.normalize().multiply(start.getRadius())
-        .add(startVec);
-    Vector2D endPoint = delta.normalize().multiply(-end.getRadius())
-        .add(endVec);
+    // Find the centers
+    Vector2D startCenter = new Vector2D(
+        (startBounds.getMinX() + startBounds.getMaxX()) / 2,
+        (startBounds.getMinY() + startBounds.getMaxY()) / 2
+    );
+    Vector2D endCenter = new Vector2D(
+        (endBounds.getMinX() + endBounds.getMaxX()) / 2,
+        (endBounds.getMinY() + endBounds.getMaxY()) / 2
+    );
+
+    // calculate direction
+    Vector2D direction = endCenter
+        .subtract(startCenter)
+        .normalize();
+
+    // Escape the start node to accommodate weird shapes
+    Vector2D current = startCenter;
+    while (!direction.equals(Vector2D.ZERO) && startBounds.contains(current.toPoint2D())) {
+      current = current.add(direction);
+    }
+
+    Vector2D startPoint = current;
+
+    // Escape the end node to accommodate weird shapes
+    current = endCenter;
+    while (!direction.equals(Vector2D.ZERO) && endBounds.contains(current.toPoint2D())) {
+      current = current.subtract(direction);
+    }
+
+    Vector2D endPoint = current;
 
     line.setStartX(startPoint.getX());
     line.setStartY(startPoint.getY());

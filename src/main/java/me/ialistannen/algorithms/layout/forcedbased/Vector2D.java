@@ -1,5 +1,8 @@
 package me.ialistannen.algorithms.layout.forcedbased;
 
+import java.util.Objects;
+import javafx.geometry.Point2D;
+
 public class Vector2D {
 
   public static final Vector2D ZERO = new Vector2D(0, 0);
@@ -172,6 +175,15 @@ public class Vector2D {
   }
 
   /**
+   * Converts this vector to a {@link Point2D}.
+   *
+   * @return the resulting point
+   */
+  public Point2D toPoint2D() {
+    return new Point2D(getX(), getY());
+  }
+
+  /**
    * Returns the absolute value of this vector. Applies {@link Math#abs(int)} to each component.
    *
    * @return the absolute vector
@@ -188,5 +200,23 @@ public class Vector2D {
   @Override
   public String toString() {
     return String.format("Vector2D{x=%.2f, y=%.2f}", x, y);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Vector2D vector2D = (Vector2D) o;
+    return Double.compare(vector2D.x, x) == 0 &&
+        Double.compare(vector2D.y, y) == 0;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(x, y);
   }
 }
