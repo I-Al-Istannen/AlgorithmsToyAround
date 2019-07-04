@@ -30,15 +30,15 @@ public class ConnectionLine<T> extends Pane {
 
     getChildren().add(line);
 
-    ArrowTest arrowTest = new ArrowTest(Bindings.createObjectBinding(
+    ArrowHead arrowHead = new ArrowHead(Bindings.createObjectBinding(
         () -> new Vector2D(
             line.getEndX() - line.getStartX(),
             line.getEndY() - line.getStartY()
         ),
         line.startXProperty(), line.startYProperty(), line.endXProperty(), line.endYProperty()
     ));
-    getChildren().add(arrowTest);
-    arrowTest.translateXProperty().bind(line.endXProperty());
-    arrowTest.translateYProperty().bind(line.endYProperty());
+    getChildren().add(arrowHead);
+    arrowHead.translateXProperty().bind(line.endXProperty());
+    arrowHead.translateYProperty().bind(line.endYProperty());
   }
 }
