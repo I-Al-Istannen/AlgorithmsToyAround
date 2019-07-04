@@ -30,6 +30,8 @@ public class ElectricalRepulsionForce implements ForceActor {
 
     double force = repulsionConstant / distance;
 
+    force = Math.min(force, 20);
+
     // End - start, so it is negative (i.e. repulses)
     Vector2D resultingForce = a.getPosition()
         .subtract(b.getPosition())
