@@ -1,6 +1,5 @@
 package me.ialistannen.algorithms.layout.forcedbased.view;
 
-import javafx.beans.value.ObservableDoubleValue;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -27,7 +26,7 @@ public class NodeCircle<T> extends StackPane {
   public NodeCircle(Node<T> node) {
     this.node = node;
 
-    Circle circle = new Circle(10, Color.ROYALBLUE);
+    Circle circle = new Circle(getRadius() * 2, Color.ROYALBLUE);
     Label label = new Label(node.getValue().toString());
     label.setFont(Font.font("monospace", FontWeight.BOLD, 16));
     label.setTextFill(Color.WHITE);
@@ -45,26 +44,25 @@ public class NodeCircle<T> extends StackPane {
    */
   public void update() {
     Vector2D position = node.getPosition();
-    this.setTranslateX(position.getX());
-    this.setTranslateY(position.getY());
+    translateXProperty().set(position.getX());
+    translateYProperty().set(position.getY());
+  }
+
+  public double getCenterX() {
+    return getTranslateX() + getWidth() / 2;
+  }
+
+  public double getCenterY() {
+    return getTranslateY() + getHeight() / 2;
   }
 
   /**
-   * Returns the center x coordinate.
+   * Returns this node's radius.
    *
-   * @return the center x coordinate
+   * @return the radius of this node
    */
-  public ObservableDoubleValue centerXProperty() {
-    return translateXProperty().add(widthProperty().divide(2));
-  }
-
-  /**
-   * Returns the center y coordinate.
-   *
-   * @return the center y coordinate
-   */
-  public ObservableDoubleValue centerYProperty() {
-    return translateYProperty().add(heightProperty().divide(2));
+  public double getRadius() {
+    return 10;
   }
 
   /**

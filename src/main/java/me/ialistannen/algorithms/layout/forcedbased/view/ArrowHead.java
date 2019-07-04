@@ -1,5 +1,6 @@
 package me.ialistannen.algorithms.layout.forcedbased.view;
 
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
@@ -10,6 +11,7 @@ import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
  */
 public class ArrowHead extends AnchorPane {
 
+  private final ChangeListener<Vector2D> updateListener;
   private Line left;
   private Line right;
 
@@ -19,9 +21,8 @@ public class ArrowHead extends AnchorPane {
    * @param lineVector the line vector
    */
   public ArrowHead(ObservableValue<Vector2D> lineVector) {
-    lineVector.addListener((observable, oldValue, newValue) -> {
-      update(newValue);
-    });
+    updateListener = (observable, oldValue, newValue) -> update(newValue);
+    lineVector.addListener(updateListener);
 
     left = new Line(0, 0, 0, 0);
     right = new Line(0, 0, 0, 0);
