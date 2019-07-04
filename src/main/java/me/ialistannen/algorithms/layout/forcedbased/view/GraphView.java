@@ -90,4 +90,13 @@ public class GraphView<T> extends FlowPane {
   public void update() {
     circles.forEach(NodeCircle::update);
   }
+
+  /**
+   * Returns all node circles.
+   *
+   * @return the node circles
+   */
+  public List<NodeCircle<T>> getCircles() {
+    return Collections.unmodifiableList(circles);
+  }
 }
