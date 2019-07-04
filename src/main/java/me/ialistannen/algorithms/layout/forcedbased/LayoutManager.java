@@ -72,9 +72,6 @@ public class LayoutManager<T> implements Runnable {
         if (first == second) {
           continue;
         }
-        if (first.isPausePhysics() || second.isPausePhysics()) {
-          continue;
-        }
         forces.forEach(forceActor -> forceActor.apply(first, second));
       }
     }

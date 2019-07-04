@@ -60,6 +60,7 @@ public class GraphView<T> extends FlowPane {
       Vector2D direction = currentPos.subtract(startPos);
 
       circle.getNode().setActingForce(direction);
+      circle.getNode().setPosition(currentPos);
     }));
   }
 

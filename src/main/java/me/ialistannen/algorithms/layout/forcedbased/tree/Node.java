@@ -46,6 +46,9 @@ public class Node<T> {
    * @param actingForce the acting force
    */
   public void setActingForce(Vector2D actingForce) {
+    if (isPausePhysics()) {
+      return;
+    }
     this.actingForce = actingForce;
   }
 
@@ -86,11 +89,20 @@ public class Node<T> {
   }
 
   /**
-   * Adds a birdirectional connection.
+   * Adds a uni-directional connection.
    *
    * @param other the other node
    */
-  public void addConnection(Node<T> other) {
+  public void addUnidirectionalConnection(Node<T> other) {
+    neighbours.add(other);
+  }
+
+  /**
+   * Adds a bi-directional connection.
+   *
+   * @param other the other node
+   */
+  public void addBidirectionalConnection(Node<T> other) {
     neighbours.add(other);
     other.neighbours.add(this);
   }

@@ -25,7 +25,8 @@ public class SpringAttractionForce implements ForceActor {
 
   @Override
   public void apply(Node a, Node b) {
-    if (!a.isConnected(b)) {
+    // One direction is enough
+    if (!a.isConnected(b) && !b.isConnected(a)) {
       return;
     }
 

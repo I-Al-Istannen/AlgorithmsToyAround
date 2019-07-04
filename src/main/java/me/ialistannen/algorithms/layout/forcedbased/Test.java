@@ -1,5 +1,6 @@
 package me.ialistannen.algorithms.layout.forcedbased;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -31,7 +32,7 @@ public class Test extends Application {
         Arrays.asList(
             new ElectricalRepulsionForce(1e5),
             new SpringAttractionForce(50, 0.1),
-            new BlackHoleAttractionForce(new Vector2D(200, 200), 9.81e3)
+            new BlackHoleAttractionForce(new Vector2D(250, 250), 9.81e3)
         ),
         0.5
     );
@@ -54,33 +55,26 @@ public class Test extends Application {
 
     primaryStage.getScene().setOnKeyPressed(event -> {
       if (event.getText().equals("R")) {
-        randomizeLocation(400, 400, nodes);
+        randomizeLocation(500, 500, nodes);
       }
     });
   }
 
   private List<Node<String>> getNodes(int maxX, int maxY) {
-    Node<String> a = new Node<>("H");
-    Node<String> b = new Node<>("E");
-    Node<String> c = new Node<>("Y");
+    List<Node<String>> nodes = new ArrayList<>();
 
-    Node<String> d = new Node<>("Y");
-    Node<String> e = new Node<>("O");
-    Node<String> f = new Node<>("U");
+    for (int i = 0; i < 12; i++) {
+      Node<String> newNode = new Node<>("" + (char) (i + 'A'));
 
-    Node<String> g = new Node<>("Z");
+      for (Node<String> node : nodes) {
+        if (ThreadLocalRandom.current().nextInt(10) < 4) {
+          node.addBidirectionalConnection(newNode);
+        }
+      }
 
-    a.addConnection(b);
-    a.addConnection(c);
-    b.addConnection(c);
+      nodes.add(newNode);
+    }
 
-    d.addConnection(e);
-    e.addConnection(f);
-
-    g.addConnection(a);
-    g.addConnection(f);
-
-    List<Node<String>> nodes = Arrays.asList(a, b, c, d, e, f, g);
     randomizeLocation(maxX, maxY, nodes);
     return nodes;
   }

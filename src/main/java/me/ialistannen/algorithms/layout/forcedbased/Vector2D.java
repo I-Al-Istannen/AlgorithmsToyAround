@@ -143,6 +143,17 @@ public class Vector2D {
   }
 
   /**
+   * Returns the chebychev distance to the other vector, which is basically a square.
+   *
+   * @param other the other vector
+   * @return the distance
+   */
+  public double chebyshevDistanceTo(Vector2D other) {
+    Vector2D diff = other.subtract(this);
+    return Math.max(Math.abs(diff.getX()), Math.abs(diff.getY()));
+  }
+
+  /**
    * Returns the length of this vector.
    *
    * @return the length of this vector.
