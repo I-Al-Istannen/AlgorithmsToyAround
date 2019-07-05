@@ -12,6 +12,8 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -27,6 +29,8 @@ import me.ialistannen.algorithms.layout.forcedbased.view.NodeCircle;
 
 public class Test extends Application {
 
+  private ObjectBinding<Vector2D> windowCenterBinding;
+
   @Override
   public void start(Stage primaryStage) {
     BorderPane root = new BorderPane();
@@ -34,12 +38,17 @@ public class Test extends Application {
     List<Node<String>> nodes = getDominoNodes(500, 500);
     GraphView<String> graphView = new GraphView<>(nodes);
 
+    windowCenterBinding = Bindings.createObjectBinding(
+        () -> new Vector2D(root.getWidth() / 2, root.getHeight() / 2),
+        root.widthProperty(), root.heightProperty()
+    );
+
     LayoutManager<String> layoutManager = new LayoutManager<>(
         nodes,
         Arrays.asList(
             new ElectricalRepulsionForce(400000),
             new SpringAttractionForce(50, 0.1),
-            new BlackHoleAttractionForce(new Vector2D(250, 250), 9.81e3)
+            new BlackHoleAttractionForce(windowCenterBinding, 9.81e3)
         ),
         0.5
     );

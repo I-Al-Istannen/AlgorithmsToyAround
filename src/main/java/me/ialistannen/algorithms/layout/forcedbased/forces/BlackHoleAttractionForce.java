@@ -1,5 +1,6 @@
 package me.ialistannen.algorithms.layout.forcedbased.forces;
 
+import javafx.beans.value.ObservableValue;
 import me.ialistannen.algorithms.layout.forcedbased.ForceActor;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
@@ -9,7 +10,7 @@ import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
  */
 public class BlackHoleAttractionForce implements ForceActor {
 
-  private Vector2D center;
+  private final ObservableValue<Vector2D> center;
   private double g;
 
   /**
@@ -18,14 +19,14 @@ public class BlackHoleAttractionForce implements ForceActor {
    * @param center the center position
    * @param g the gravitational constant. At least by name
    */
-  public BlackHoleAttractionForce(Vector2D center, double g) {
+  public BlackHoleAttractionForce(ObservableValue<Vector2D> center, double g) {
     this.center = center;
     this.g = g;
   }
 
   @Override
   public void apply(Node a, Node b) {
-    double distanceSquared = a.getPosition().chebyshevDistanceTo(center);
+    double distanceSquared = a.getPosition().chebyshevDistanceTo(center.getValue());
     distanceSquared *= distanceSquared;
 
     // Inverse gravitation. Nearly discovered Anti-gravity but fell short :(
@@ -33,7 +34,7 @@ public class BlackHoleAttractionForce implements ForceActor {
 
     constant = Math.min(constant, 2);
 
-    Vector2D delta = center
+    Vector2D delta = center.getValue()
         .subtract(a.getPosition())
         .normalize()
         .multiply(constant);
