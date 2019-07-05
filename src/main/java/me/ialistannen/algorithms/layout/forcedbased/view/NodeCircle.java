@@ -2,7 +2,6 @@ package me.ialistannen.algorithms.layout.forcedbased.view;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -62,13 +61,6 @@ public class NodeCircle<T> extends GridPane {
     setupChildren();
 
     update();
-
-    if (ThreadLocalRandom.current().nextBoolean()) {
-      setRightText("Righty");
-    }
-    if (ThreadLocalRandom.current().nextBoolean()) {
-      setLeftText("Lefty");
-    }
   }
 
   private void setupChildren() {

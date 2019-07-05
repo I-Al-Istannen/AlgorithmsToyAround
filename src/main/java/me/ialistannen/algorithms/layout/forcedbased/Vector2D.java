@@ -3,6 +3,9 @@ package me.ialistannen.algorithms.layout.forcedbased;
 import java.util.Objects;
 import javafx.geometry.Point2D;
 
+/**
+ * A two dimensional vector.
+ */
 public class Vector2D {
 
   public static final Vector2D ZERO = new Vector2D(0, 0);

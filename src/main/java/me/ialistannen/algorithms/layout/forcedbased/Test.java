@@ -3,7 +3,10 @@ package me.ialistannen.algorithms.layout.forcedbased;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -15,8 +18,11 @@ import javafx.util.Duration;
 import me.ialistannen.algorithms.layout.forcedbased.forces.BlackHoleAttractionForce;
 import me.ialistannen.algorithms.layout.forcedbased.forces.ElectricalRepulsionForce;
 import me.ialistannen.algorithms.layout.forcedbased.forces.SpringAttractionForce;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirst;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.NodeChangeAction;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
 import me.ialistannen.algorithms.layout.forcedbased.view.GraphView;
+import me.ialistannen.algorithms.layout.forcedbased.view.NodeCircle;
 
 public class Test extends Application {
 
@@ -58,6 +64,20 @@ public class Test extends Application {
         randomizeLocation(500, 500, nodes);
       }
     });
+
+    Map<Node<String>, NodeCircle<String>> circleMap = graphView.getCircles().stream()
+        .collect(Collectors.toMap(NodeCircle::getNode, Function.identity()));
+    List<NodeChangeAction<String>> list = new DepthFirst().run(nodes);
+    Timeline ticker = new Timeline(new KeyFrame(
+        Duration.millis(500),
+        event -> {
+          NodeChangeAction<String> action = list.get(0);
+          action.apply(circleMap.get(action.getNode()));
+          list.remove(0);
+        }
+    ));
+    ticker.setCycleCount(list.size());
+    ticker.play();
   }
 
   private List<Node<String>> getNodes(int maxX, int maxY) {
@@ -68,7 +88,8 @@ public class Test extends Application {
 
       for (Node<String> node : nodes) {
         if (ThreadLocalRandom.current().nextInt(10) < 4) {
-          node.addBidirectionalConnection(newNode);
+//          node.addBidirectionalConnection(newNode);
+          node.addUnidirectionalConnection(newNode);
         }
       }
 
