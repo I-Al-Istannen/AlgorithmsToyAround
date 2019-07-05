@@ -87,7 +87,7 @@ public class Test extends Application {
         }
     ));
     ticker.setCycleCount(list.size());
-    ticker.play();
+//    ticker.play();
   }
 
   private List<Node<String>> getNodes(int maxX, int maxY) {
@@ -98,7 +98,7 @@ public class Test extends Application {
 
       for (Node<String> node : nodes) {
         if (ThreadLocalRandom.current().nextInt(10) < 4) {
-          node.addBidirectionalConnection(newNode);
+          node.addBidirectionalConnection(newNode, 1);
 //          node.addUnidirectionalConnection(newNode);
         }
       }
@@ -121,21 +121,21 @@ public class Test extends Application {
     Node<String> six = new Node<>("6");
 
 //    one.addBidirectionalConnection(two);
-    one.addBidirectionalConnection(three);
+    one.addBidirectionalConnection(three, 1);
 
-    one.addBidirectionalConnection(four);
-    one.addBidirectionalConnection(five);
-    one.addBidirectionalConnection(six);
+    one.addBidirectionalConnection(four, 1);
+    one.addBidirectionalConnection(five, 1);
+    one.addBidirectionalConnection(six, 1);
 
-    two.addBidirectionalConnection(three);
-    two.addBidirectionalConnection(four);
-    two.addBidirectionalConnection(five);
+    two.addBidirectionalConnection(three, 1);
+    two.addBidirectionalConnection(four, 1);
+    two.addBidirectionalConnection(five, 1);
 
-    three.addBidirectionalConnection(four);
+    three.addBidirectionalConnection(four, 1);
 
-    four.addBidirectionalConnection(five);
+    four.addBidirectionalConnection(five, 1);
 
-    five.addBidirectionalConnection(six);
+    five.addBidirectionalConnection(six, 1);
 
     Collections.addAll(
         nodes,

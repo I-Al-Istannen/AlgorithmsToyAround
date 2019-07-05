@@ -1,12 +1,15 @@
 package me.ialistannen.algorithms.layout.forcedbased.view;
 
+import java.text.DecimalFormat;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Bounds;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
+import me.ialistannen.algorithms.layout.forcedbased.tree.Edge;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,8 +33,11 @@ public class ConnectionLine<T> extends Pane {
    *
    * @param start the start point
    * @param end the end point
+   * @param edge the edge this line models
    */
-  public ConnectionLine(NodeCircle<T> start, NodeCircle<T> end) {
+  public ConnectionLine(NodeCircle<T> start, NodeCircle<T> end, Edge<T> edge) {
+    getStylesheets().add("/css/nodelayout/ConnectionLine.css");
+
     line = new Line();
 
     ChangeListener<Object> changeListener = (observable, oldValue, newValue) ->
@@ -44,6 +50,18 @@ public class ConnectionLine<T> extends Pane {
     end.widthProperty().addListener(changeListener);
 
     getChildren().add(line);
+
+    if (edge.getWeight() != 0) {
+      Label weightLabel = new Label(DecimalFormat.getNumberInstance().format(edge.getWeight()));
+      weightLabel.getStyleClass().add("weight-label");
+      weightLabel.translateXProperty().bind(
+          line.startXProperty().add(line.endXProperty()).divide(2)
+      );
+      weightLabel.translateYProperty().bind(
+          line.startYProperty().add(line.endYProperty()).divide(2)
+      );
+      getChildren().add(weightLabel);
+    }
 
     if (start.getNode().isConnected(end.getNode())) {
       startHeadBinding = getLineVector(1);

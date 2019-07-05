@@ -7,11 +7,13 @@ public class Edge<T> {
   private Node<T> start;
   private Node<T> end;
   private boolean bidirectional;
+  private double weight;
 
-  public Edge(Node<T> start, Node<T> end, boolean bidirectional) {
+  public Edge(Node<T> start, Node<T> end, boolean bidirectional, double weight) {
     this.start = start;
     this.end = end;
     this.bidirectional = bidirectional;
+    this.weight = weight;
   }
 
   public Node<T> getStart() {
@@ -24,6 +26,15 @@ public class Edge<T> {
 
   public boolean isBidirectional() {
     return bidirectional;
+  }
+
+  /**
+   * The edge weight.
+   *
+   * @return the edge weight
+   */
+  public double getWeight() {
+    return weight;
   }
 
   @Override

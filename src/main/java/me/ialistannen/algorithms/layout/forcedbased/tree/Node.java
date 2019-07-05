@@ -1,6 +1,9 @@
 package me.ialistannen.algorithms.layout.forcedbased.tree;
 
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 
@@ -15,7 +18,7 @@ public class Node<T> {
   private Vector2D actingForce;
   private Vector2D position;
 
-  private Set<Node<T>> neighbours;
+  private Map<Node<T>, Edge<T>> neighbours;
   private boolean pausePhysics;
 
   /**
@@ -28,7 +31,7 @@ public class Node<T> {
 
     this.actingForce = new Vector2D(0, 0);
     this.position = new Vector2D(0, 0);
-    this.neighbours = new HashSet<>();
+    this.neighbours = new HashMap<>();
   }
 
   /**
@@ -80,31 +83,42 @@ public class Node<T> {
   }
 
   /**
-   * Returns all neighbours. Modifiable.
+   * Returns all neighbours. Unmodifiable.
    *
    * @return all neighbours
    */
   public Set<Node<T>> getNeighbours() {
-    return neighbours;
+    return Collections.unmodifiableSet(neighbours.keySet());
+  }
+
+  /**
+   * Returns all edges. Unmodifiable.
+   *
+   * @return all neighbours
+   */
+  public Collection<Edge<T>> getEdges() {
+    return Collections.unmodifiableCollection(neighbours.values());
   }
 
   /**
    * Adds a uni-directional connection.
    *
    * @param other the other node
+   * @param weight the edge weight
    */
-  public void addUnidirectionalConnection(Node<T> other) {
-    neighbours.add(other);
+  public void addUnidirectionalConnection(Node<T> other, double weight) {
+    neighbours.put(other, new Edge<>(this, other, false, weight));
   }
 
   /**
    * Adds a bi-directional connection.
    *
    * @param other the other node
+   * @param weight the edge weight
    */
-  public void addBidirectionalConnection(Node<T> other) {
-    neighbours.add(other);
-    other.neighbours.add(this);
+  public void addBidirectionalConnection(Node<T> other, double weight) {
+    neighbours.put(other, new Edge<>(this, other, true, weight));
+    other.neighbours.put(this, new Edge<>(other, this, true, weight));
   }
 
   /**
@@ -114,7 +128,7 @@ public class Node<T> {
    * @return true if they are connected
    */
   public boolean isConnected(Node other) {
-    return neighbours.contains(other);
+    return neighbours.containsKey(other);
   }
 
   /**

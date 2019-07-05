@@ -10,7 +10,7 @@ import java.util.Set;
 public class EdgeTraversal {
 
   /**
-   * Reurns all edges in a collection of nodes.
+   * Returns all edges in a collection of nodes.
    *
    * @param nodes the nodes
    * @param <T> the type of the nodes
@@ -20,8 +20,7 @@ public class EdgeTraversal {
     Set<Edge<T>> visited = new HashSet<>();
 
     for (Node<T> first : nodes) {
-      for (Node<T> second : first.getNeighbours()) {
-        Edge<T> edge = new Edge<>(first, second, second.isConnected(first));
+      for (Edge<T> edge : first.getEdges()) {
         if (visited.contains(edge)) {
           continue;
         }

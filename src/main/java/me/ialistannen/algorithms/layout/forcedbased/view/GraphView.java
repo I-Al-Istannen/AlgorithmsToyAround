@@ -78,7 +78,7 @@ public class GraphView<T> extends FlowPane {
     for (Edge<T> edge : edges) {
       NodeCircle<T> start = circleMap.get(edge.getStart());
       NodeCircle<T> end = circleMap.get(edge.getEnd());
-      result.add(new ConnectionLine<>(start, end));
+      result.add(new ConnectionLine<>(start, end, edge));
     }
 
     return result;
