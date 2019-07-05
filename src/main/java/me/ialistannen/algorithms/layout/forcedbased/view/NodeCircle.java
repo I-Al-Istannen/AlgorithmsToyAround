@@ -3,10 +3,6 @@ package me.ialistannen.algorithms.layout.forcedbased.view;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -23,7 +19,6 @@ import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
 public class NodeCircle<T> extends GridPane {
 
   private final Node<T> node;
-  private DoubleProperty radiusProperty;
 
   @FXML
   private Label title;
@@ -60,8 +55,6 @@ public class NodeCircle<T> extends GridPane {
       throw new RuntimeException(e);
     }
 
-    setupRadiusProperty();
-
     setText(Objects.toString(node.getValue()));
     setLeftText("");
     setRightText("");
@@ -95,16 +88,6 @@ public class NodeCircle<T> extends GridPane {
     titleSeparator.managedProperty().bind(titleSeparator.visibleProperty());
   }
 
-  private void setupRadiusProperty() {
-    this.radiusProperty = new SimpleDoubleProperty();
-
-    ChangeListener<Number> radiusListener = (observable, oldValue, newValue) ->
-        radiusProperty.set(Math.max(getWidth(), getHeight()) / 2);
-
-    widthProperty().addListener(radiusListener);
-    heightProperty().addListener(radiusListener);
-  }
-
   /**
    * Updates this circle to reflect the new node position.
    */
@@ -130,25 +113,6 @@ public class NodeCircle<T> extends GridPane {
    */
   public double getCenterY() {
     return getTranslateY() + getHeight() / 2;
-  }
-
-  /**
-   * Returns the radius.
-   *
-   * @return the radius
-   */
-  public ReadOnlyDoubleProperty radiusProperty() {
-    return radiusProperty;
-  }
-
-  /**
-   * Returns this node's radius.
-   *
-   * @return the radius of this node
-   * @see #radiusProperty()
-   */
-  public double getRadius() {
-    return radiusProperty.get();
   }
 
   /**

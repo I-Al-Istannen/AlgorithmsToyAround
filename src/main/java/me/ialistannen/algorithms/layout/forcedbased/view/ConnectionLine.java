@@ -40,8 +40,8 @@ public class ConnectionLine<T> extends Pane {
     start.translateYProperty().addListener(changeListener);
     end.translateXProperty().addListener(changeListener);
     end.translateYProperty().addListener(changeListener);
-    start.radiusProperty().addListener(changeListener);
-    end.radiusProperty().addListener(changeListener);
+    start.widthProperty().addListener(changeListener);
+    end.widthProperty().addListener(changeListener);
 
     getChildren().add(line);
 
