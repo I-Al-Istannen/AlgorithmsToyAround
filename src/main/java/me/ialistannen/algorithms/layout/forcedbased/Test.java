@@ -2,6 +2,7 @@ package me.ialistannen.algorithms.layout.forcedbased;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -30,7 +31,7 @@ public class Test extends Application {
   public void start(Stage primaryStage) {
     BorderPane root = new BorderPane();
 
-    List<Node<String>> nodes = getNodes(500, 500);
+    List<Node<String>> nodes = getDominoNodes(500, 500);
     GraphView<String> graphView = new GraphView<>(nodes);
 
     LayoutManager<String> layoutManager = new LayoutManager<>(
@@ -88,13 +89,49 @@ public class Test extends Application {
 
       for (Node<String> node : nodes) {
         if (ThreadLocalRandom.current().nextInt(10) < 4) {
-//          node.addBidirectionalConnection(newNode);
-          node.addUnidirectionalConnection(newNode);
+          node.addBidirectionalConnection(newNode);
+//          node.addUnidirectionalConnection(newNode);
         }
       }
 
       nodes.add(newNode);
     }
+
+    randomizeLocation(maxX, maxY, nodes);
+    return nodes;
+  }
+
+  private List<Node<String>> getDominoNodes(int maxX, int maxY) {
+    List<Node<String>> nodes = new ArrayList<>();
+
+    Node<String> one = new Node<>("1");
+    Node<String> two = new Node<>("2");
+    Node<String> three = new Node<>("3");
+    Node<String> four = new Node<>("4");
+    Node<String> five = new Node<>("5");
+    Node<String> six = new Node<>("6");
+
+//    one.addBidirectionalConnection(two);
+    one.addBidirectionalConnection(three);
+
+    one.addBidirectionalConnection(four);
+    one.addBidirectionalConnection(five);
+    one.addBidirectionalConnection(six);
+
+    two.addBidirectionalConnection(three);
+    two.addBidirectionalConnection(four);
+    two.addBidirectionalConnection(five);
+
+    three.addBidirectionalConnection(four);
+
+    four.addBidirectionalConnection(five);
+
+    five.addBidirectionalConnection(six);
+
+    Collections.addAll(
+        nodes,
+        one, two, three, four, five, six
+    );
 
     randomizeLocation(maxX, maxY, nodes);
     return nodes;

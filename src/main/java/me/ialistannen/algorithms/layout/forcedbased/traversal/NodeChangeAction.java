@@ -14,12 +14,15 @@ public class NodeChangeAction<T> {
   private String leftText;
   private String rightText;
   private String title;
+  private boolean highlighted;
 
-  private NodeChangeAction(Node<T> node, String leftText, String rightText, String title) {
+  private NodeChangeAction(Node<T> node, String leftText, String rightText, String title,
+      boolean highlighted) {
     this.node = node;
     this.leftText = leftText;
     this.rightText = rightText;
     this.title = title;
+    this.highlighted = highlighted;
   }
 
   /**
@@ -46,6 +49,7 @@ public class NodeChangeAction<T> {
     if (title != null) {
       circle.setText(title);
     }
+    circle.setHighlight(highlighted);
   }
 
   /**
@@ -70,6 +74,7 @@ public class NodeChangeAction<T> {
     private String rightText;
     private String title;
     private Node<T> node;
+    private boolean highlighted;
 
     private Builder(Node<T> node) {
       this.node = node;
@@ -109,12 +114,23 @@ public class NodeChangeAction<T> {
     }
 
     /**
+     * Sets the highlight status.
+     *
+     * @param highlight the highlight status
+     * @return this builder
+     */
+    public Builder<T> withHighlight(boolean highlight) {
+      this.highlighted = highlight;
+      return this;
+    }
+
+    /**
      * Builds this change.
      *
      * @return the resulting {@link NodeChangeAction}
      */
     public NodeChangeAction<T> build() {
-      return new NodeChangeAction<>(node, leftText, rightText, title);
+      return new NodeChangeAction<>(node, leftText, rightText, title, highlighted);
     }
   }
 }

@@ -21,13 +21,23 @@ public class BreadthFirst implements Traversal {
     Queue<Node<T>> nextLayer = new ArrayDeque<>();
     Set<Node<T>> visited = new HashSet<>();
 
-    thisLayer.add(nodes.get(0));
+    Node<T> start = nodes.get(0);
+
+    result.add(NodeChangeAction.builder(start)
+        .withLeftText("0")
+        .withRightText("0")
+        .withHighlight(true)
+        .build()
+    );
+
+    thisLayer.add(start);
 
     int counter = 0;
     for (int level = 1; !thisLayer.isEmpty(); level++) {
 
       while (!thisLayer.isEmpty()) {
         Node<T> node = thisLayer.poll();
+        visited.add(node);
         for (Node<T> neighbour : node.getNeighbours()) {
           if (!visited.add(neighbour)) {
             continue;
@@ -36,6 +46,7 @@ public class BreadthFirst implements Traversal {
               NodeChangeAction.builder(neighbour)
                   .withLeftText("" + level)
                   .withRightText("" + ++counter)
+                  .withHighlight(true)
                   .build()
           );
           nextLayer.add(neighbour);

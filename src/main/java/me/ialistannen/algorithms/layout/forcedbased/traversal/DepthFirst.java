@@ -29,14 +29,18 @@ public class DepthFirst implements Traversal {
     if (!visited.add(start)) {
       return index - 1;
     }
-    actions.add(NodeChangeAction.builder(start).withLeftText("" + index).build());
+    actions.add(
+        NodeChangeAction.builder(start).withLeftText("" + index).withHighlight(true).build()
+    );
 
     for (Node<T> neighbour : start.getNeighbours()) {
       index = visit(neighbour, index + 1, actions, visited);
     }
     index++;
 
-    actions.add(NodeChangeAction.builder(start).withRightText("" + index).build());
+    actions.add(
+        NodeChangeAction.builder(start).withRightText("" + index).withHighlight(true).build()
+    );
 
     return index;
   }
