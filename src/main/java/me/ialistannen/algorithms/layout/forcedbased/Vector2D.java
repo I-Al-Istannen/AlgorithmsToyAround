@@ -72,6 +72,17 @@ public class Vector2D {
   }
 
   /**
+   * Subtracts the given values.
+   *
+   * @param x the x delta
+   * @param y the y delta
+   * @return the resulting vector
+   */
+  public Vector2D subtract(double x, double y) {
+    return new Vector2D(this.x + x, this.y + y);
+  }
+
+  /**
    * Adds the given vector to this one.
    *
    * @param delta the delta vector
@@ -80,7 +91,6 @@ public class Vector2D {
   public Vector2D add(Vector2D delta) {
     return add(delta.getX(), delta.getY());
   }
-
   /**
    * Adds the given values.
    *

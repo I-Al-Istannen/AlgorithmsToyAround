@@ -55,7 +55,8 @@ public class GraphView<T> extends FlowPane {
         .forEach(dragInteractionManager::registerCircleDragAndDrop);
 
     setOnMouseDragged(event -> dragInteractionManager.executeIfDragging((circle, startPos) -> {
-      Vector2D currentPos = new Vector2D(event.getX(), event.getY());
+      Vector2D currentPos = new Vector2D(event.getX(), event.getY())
+          .subtract(circle.getWidth() / 2, circle.getHeight() / 2);
 
       Vector2D direction = currentPos.subtract(startPos);
 
