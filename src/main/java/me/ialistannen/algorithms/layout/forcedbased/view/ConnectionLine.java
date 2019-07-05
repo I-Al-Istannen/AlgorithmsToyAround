@@ -75,8 +75,8 @@ public class ConnectionLine<T> extends Pane {
 
   private void updateStartEnd(NodeCircle<T> start, NodeCircle<T> end) {
     // Retrieve bounds
-    Bounds startBounds = start.getBoundsInParent();
-    Bounds endBounds = end.getBoundsInParent();
+    Bounds startBounds = start.localToParent(start.getLayoutBounds());
+    Bounds endBounds = end.localToParent(end.getLayoutBounds());
 
     // Find the centers
     Vector2D startCenter = new Vector2D(

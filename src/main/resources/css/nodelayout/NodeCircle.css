@@ -1,5 +1,5 @@
 .highlighted-node {
-  -fx-effect: dropshadow(gaussian, tomato, 20, 0.2, 0, 0);
+  -fx-effect: dropshadow(gaussian, lightskyblue, 20, 0.2, 0, 0);
 }
 
 .circle-title {
