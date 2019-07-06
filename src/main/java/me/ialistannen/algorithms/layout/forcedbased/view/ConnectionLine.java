@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.layout.AnchorPane;
@@ -29,6 +30,8 @@ public class ConnectionLine<T> extends AnchorPane {
   @SuppressWarnings("FieldCanBeLocal")
   private ObjectBinding<Vector2D> endHeadBinding;
 
+  private StringProperty edgeWeight;
+
   /**
    * Creates a new connection line.
    *
@@ -40,7 +43,8 @@ public class ConnectionLine<T> extends AnchorPane {
     getStylesheets().add("/css/nodelayout/ConnectionLine.css");
     setPickOnBounds(false);
 
-    line = new Line();
+    this.line = new Line();
+    this.edgeWeight = new SimpleStringProperty();
 
     ChangeListener<Object> changeListener = (observable, oldValue, newValue) ->
         updateStartEnd(start, end);
@@ -56,12 +60,15 @@ public class ConnectionLine<T> extends AnchorPane {
     if (edge.getWeight() != 0) {
       EditableLabel weightLabel = new EditableLabel<>(
           input -> DecimalFormat.getNumberInstance().parse(input).doubleValue(),
-          o -> System.out.println("Setting weight to " + o)
+          newWeight -> {
+            start.getNode().alterEdgeWeight(edge, newWeight);
+            edgeWeight.set(DecimalFormat.getNumberInstance().format(newWeight));
+          }
       );
-      weightLabel.textProperty().bind(
-          new SimpleStringProperty(DecimalFormat.getNumberInstance().format(edge.getWeight()))
-      );
+      edgeWeight.setValue(DecimalFormat.getNumberInstance().format(edge.getWeight()));
+      weightLabel.textProperty().bind(edgeWeight);
       weightLabel.getStyleClass().add("weight-label");
+
       weightLabel.translateXProperty().bind(
           line.startXProperty().add(line.endXProperty()).divide(2)
       );

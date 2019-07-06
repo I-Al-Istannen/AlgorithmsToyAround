@@ -122,6 +122,38 @@ public class Node<T> {
   }
 
   /**
+   * Removes the connection with the given node.
+   *
+   * If the connection was bidirectional, it is downgraded to an unidirectional one.
+   *
+   * @param other the other node
+   */
+  public void removeConnectionWith(Node<T> other) {
+    Edge<T> removed = neighbours.remove(other);
+
+    if (removed != null && removed.isBidirectional()) {
+      other.addUnidirectionalConnection(this, removed.getWeight());
+    }
+  }
+
+  /**
+   * Alters a single edge.
+   *
+   * @param edge the edge to alter
+   */
+  public void alterEdgeWeight(Edge<T> edge, double newWeight) {
+    if (!neighbours.containsKey(edge.getEnd())) {
+      return;
+    }
+
+    if (edge.isBidirectional()) {
+      addBidirectionalConnection(edge.getEnd(), newWeight);
+    } else {
+      addUnidirectionalConnection(this, newWeight);
+    }
+  }
+
+  /**
    * Returns whether this node is connected with the other node.
    *
    * @param other the other node

@@ -70,6 +70,7 @@ public class Edge<T> {
         "start=" + start +
         ", end=" + end +
         ", bidirectional=" + bidirectional +
+        ", weight=" + weight +
         '}';
   }
 }
