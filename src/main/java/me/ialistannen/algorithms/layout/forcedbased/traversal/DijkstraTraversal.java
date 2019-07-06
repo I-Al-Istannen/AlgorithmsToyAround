@@ -25,6 +25,13 @@ public class DijkstraTraversal implements Traversal {
     DijkstraNode<T> startNode = new DijkstraNodeFactory<T>().getOrCached(nodes.get(0));
     startNode.distance = 0;
 
+    changeActions.add(NodeChangeAction.builder(startNode.wrapped)
+        .withLeftText("S")
+        .withRightText("0")
+        .withHighlight(true)
+        .build()
+    );
+
     openSet.add(startNode);
 
     while (!openSet.isEmpty()) {
