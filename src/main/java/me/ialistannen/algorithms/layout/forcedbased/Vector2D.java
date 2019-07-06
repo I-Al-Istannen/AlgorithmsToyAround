@@ -79,7 +79,7 @@ public class Vector2D {
    * @return the resulting vector
    */
   public Vector2D subtract(double x, double y) {
-    return new Vector2D(this.x + x, this.y + y);
+    return new Vector2D(this.x - x, this.y - y);
   }
 
   /**
