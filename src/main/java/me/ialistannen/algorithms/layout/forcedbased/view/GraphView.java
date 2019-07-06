@@ -10,13 +10,21 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import javafx.animation.Animation.Status;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.BreadthFirst;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirst;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.DijkstraTraversal;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.NodeChangeAction;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Edge;
 import me.ialistannen.algorithms.layout.forcedbased.tree.EdgeTraversal;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
@@ -34,6 +42,7 @@ public class GraphView<T> extends StackPane {
   private final List<ConnectionLine<T>> connectionLines;
   private final AnchorPane linePane;
   private final DragInteractionManager<T> dragInteractionManager;
+  private Timeline animationTimer;
 
   /**
    * Creates a new graph view.
@@ -102,13 +111,56 @@ public class GraphView<T> extends StackPane {
   private Consumer<NodeCircle<T>> registerDeleteContextMenu(ObservableList<Node<T>> nodes) {
     return circle -> circle.setOnContextMenuRequested(event -> {
       ContextMenu contextMenu = new ContextMenu();
+
       MenuItem delete = new MenuItem("Delete");
       delete.setOnAction(e -> nodes.remove(circle.getNode()));
       contextMenu.getItems().add(delete);
 
+      MenuItem startDFS = new MenuItem("Start DFS");
+      startDFS.setOnAction(e -> replayActions(
+          new DepthFirst().run(Collections.singletonList(circle.getNode()))
+      ));
+      contextMenu.getItems().add(startDFS);
+
+      MenuItem startBFS = new MenuItem("Start BFS");
+      startBFS.setOnAction(e -> replayActions(
+          new BreadthFirst().run(Collections.singletonList(circle.getNode()))
+      ));
+      contextMenu.getItems().add(startBFS);
+
+      MenuItem startDijkstra = new MenuItem("Start Dijkstra");
+      startDijkstra.setOnAction(e -> replayActions(
+          new DijkstraTraversal().run(Collections.singletonList(circle.getNode()))
+      ));
+      contextMenu.getItems().add(startDijkstra);
+
       event.consume();
       contextMenu.show(circle, event.getScreenX(), event.getScreenY());
     });
+  }
+
+  private void replayActions(List<NodeChangeAction<T>> actions) {
+    if (animationTimer != null && animationTimer.getStatus() != Status.STOPPED) {
+      animationTimer.stop();
+    }
+
+    // reset circles
+    for (NodeCircle<T> circle : getCircles()) {
+      circle.setLeftText("");
+      circle.setRightText("");
+      circle.setHighlight(false);
+    }
+
+    animationTimer = new Timeline(new KeyFrame(
+        Duration.millis(500),
+        event -> {
+          NodeChangeAction<T> action = actions.get(0);
+          findCircleForNode(action.getNode()).ifPresent(action::apply);
+          actions.remove(0);
+        }
+    ));
+    animationTimer.setCycleCount(actions.size());
+    animationTimer.play();
   }
 
   private void removeCircle(NodeCircle<T> circle) {

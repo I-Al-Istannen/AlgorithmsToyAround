@@ -122,26 +122,6 @@ public class Test extends Application {
 //    ticker.play();
   }
 
-  private List<Node<String>> getNodes(int maxX, int maxY) {
-    List<Node<String>> nodes = new ArrayList<>();
-
-    for (int i = 0; i < 12; i++) {
-      Node<String> newNode = new Node<>(String.format("%s", (char) (i + 'A')));
-
-      for (Node<String> node : nodes) {
-        if (ThreadLocalRandom.current().nextInt(10) < 4) {
-          node.addBidirectionalConnection(newNode, 1);
-//          node.addUnidirectionalConnection(newNode);
-        }
-      }
-
-      nodes.add(newNode);
-    }
-
-    randomizeLocation(maxX, maxY, nodes);
-    return nodes;
-  }
-
   private List<Node<String>> getDominoNodes(int maxX, int maxY) {
     List<Node<String>> nodes = new ArrayList<>();
 
