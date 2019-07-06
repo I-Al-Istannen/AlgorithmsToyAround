@@ -22,6 +22,11 @@ import org.jetbrains.annotations.NotNull;
 public class ConnectionLine<T> extends AnchorPane {
 
   private final Line line;
+  @NotNull
+  private final NodeCircle<T> start;
+  @NotNull
+  private final NodeCircle<T> end;
+
   // NEVER MAKE THESE LOCAL VARIABLES. Due to some interesting design decisions in JavaFx,
   // the bindings **will be garbage collected while the nodes are still active**, if you do not
   // hold a strong reference to them yourself!
@@ -40,6 +45,8 @@ public class ConnectionLine<T> extends AnchorPane {
    * @param edge the edge this line models
    */
   public ConnectionLine(NodeCircle<T> start, NodeCircle<T> end, Edge<T> edge) {
+    this.start = start;
+    this.end = end;
     getStylesheets().add("/css/nodelayout/ConnectionLine.css");
     setPickOnBounds(false);
 
@@ -146,5 +153,15 @@ public class ConnectionLine<T> extends AnchorPane {
     line.setStartY(startPoint.getY());
     line.setEndX(endPoint.getX());
     line.setEndY(endPoint.getY());
+  }
+
+  /**
+   * Returns whether the start or end point matches the given point.
+   *
+   * @param circle the point to check
+   * @return true if the given point is the start or end point of this line
+   */
+  public boolean isEndOrStartFor(NodeCircle<T> circle) {
+    return start.equals(circle) || end.equals(circle);
   }
 }

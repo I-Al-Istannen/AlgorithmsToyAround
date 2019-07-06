@@ -1,6 +1,5 @@
 package me.ialistannen.algorithms.layout.forcedbased;
 
-import java.util.ArrayList;
 import java.util.List;
 import me.ialistannen.algorithms.layout.forcedbased.normalizing.NodePositionNormalizer;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
@@ -20,15 +19,15 @@ public class LayoutManager<T> implements Runnable {
   /**
    * Creates a new layout manager.
    *
-   * @param nodes the nodes to layout
-   * @param forces the forces to apply
+   * @param nodes the nodes to layout. Copies the reference!
+   * @param forces the forces to apply. Copies the reference!
    * @param nodePositionNormalizer the normalizer for node positions
    * @param dampeningFactor the velocity dampening factor
    */
   public LayoutManager(List<Node<T>> nodes, List<ForceActor> forces,
       NodePositionNormalizer nodePositionNormalizer, double dampeningFactor) {
-    this.nodes = new ArrayList<>(nodes);
-    this.forces = new ArrayList<>(forces);
+    this.nodes = nodes;
+    this.forces = forces;
     this.nodePositionNormalizer = nodePositionNormalizer;
     this.dampeningFactor = dampeningFactor;
   }
@@ -38,8 +37,8 @@ public class LayoutManager<T> implements Runnable {
    *
    * Uses a {@link NodePositionNormalizer#nop()} normalizer.
    *
-   * @param nodes the nodes to layout
-   * @param forces the forces to apply
+   * @param nodes the nodes to layout. Copies the reference!
+   * @param forces the forces to apply. Copies the reference!
    * @param dampeningFactor the velocity dampening factor
    */
   public LayoutManager(List<Node<T>> nodes, List<ForceActor> forces, double dampeningFactor) {

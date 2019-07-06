@@ -6,14 +6,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -21,7 +25,7 @@ import javafx.util.Duration;
 import me.ialistannen.algorithms.layout.forcedbased.forces.BlackHoleAttractionForce;
 import me.ialistannen.algorithms.layout.forcedbased.forces.ElectricalRepulsionForce;
 import me.ialistannen.algorithms.layout.forcedbased.forces.SpringAttractionForce;
-import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirst;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.DijkstraTraversal;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.NodeChangeAction;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
 import me.ialistannen.algorithms.layout.forcedbased.view.GraphView;
@@ -29,13 +33,19 @@ import me.ialistannen.algorithms.layout.forcedbased.view.NodeCircle;
 
 public class Test extends Application {
 
+  /**
+   * I don't want it to be garbage collected IntelliJ
+   */
+  @SuppressWarnings("FieldCanBeLocal")
   private ObjectBinding<Vector2D> windowCenterBinding;
 
   @Override
   public void start(Stage primaryStage) {
     BorderPane root = new BorderPane();
 
-    List<Node<String>> nodes = getDominoNodes(500, 500);
+    ObservableList<Node<String>> nodes = FXCollections.observableArrayList(
+        getDominoNodes(500, 500)
+    );
     GraphView<String> graphView = new GraphView<>(nodes);
 
     windowCenterBinding = Bindings.createObjectBinding(
@@ -77,7 +87,7 @@ public class Test extends Application {
 
     Map<Node<String>, NodeCircle<String>> circleMap = graphView.getCircles().stream()
         .collect(Collectors.toMap(NodeCircle::getNode, Function.identity()));
-    List<NodeChangeAction<String>> list = new DepthFirst().run(nodes);
+    List<NodeChangeAction<String>> list = new DijkstraTraversal().run(nodes);
     Timeline ticker = new Timeline(new KeyFrame(
         Duration.millis(500),
         event -> {
@@ -88,6 +98,14 @@ public class Test extends Application {
     ));
     ticker.setCycleCount(list.size());
 //    ticker.play();
+
+    PauseTransition pauseTransition = new PauseTransition(Duration.seconds(5));
+    pauseTransition.setOnFinished(event -> {
+      Node<String> node = new Node<>("Test");
+      node.addUnidirectionalConnection(nodes.get(2), 20);
+      nodes.add(node);
+    });
+    pauseTransition.playFromStart();
   }
 
   private List<Node<String>> getNodes(int maxX, int maxY) {
@@ -120,22 +138,23 @@ public class Test extends Application {
     Node<String> five = new Node<>("5");
     Node<String> six = new Node<>("6");
 
+    DoubleSupplier weight = () -> ThreadLocalRandom.current().nextInt(1, 5);
 //    one.addBidirectionalConnection(two);
-    one.addBidirectionalConnection(three, 1);
+    one.addBidirectionalConnection(three, weight.getAsDouble());
 
-    one.addBidirectionalConnection(four, 1);
-    one.addBidirectionalConnection(five, 1);
-    one.addBidirectionalConnection(six, 1);
+    one.addBidirectionalConnection(four, weight.getAsDouble());
+    one.addBidirectionalConnection(five, weight.getAsDouble());
+    one.addBidirectionalConnection(six, weight.getAsDouble());
 
-    two.addBidirectionalConnection(three, 1);
-    two.addBidirectionalConnection(four, 1);
-    two.addBidirectionalConnection(five, 1);
+    two.addBidirectionalConnection(three, weight.getAsDouble());
+    two.addBidirectionalConnection(four, weight.getAsDouble());
+    two.addBidirectionalConnection(five, weight.getAsDouble());
 
-    three.addBidirectionalConnection(four, 1);
+    three.addBidirectionalConnection(four, weight.getAsDouble());
 
-    four.addBidirectionalConnection(five, 1);
+    four.addBidirectionalConnection(five, weight.getAsDouble());
 
-    five.addBidirectionalConnection(six, 1);
+    five.addBidirectionalConnection(six, weight.getAsDouble());
 
     Collections.addAll(
         nodes,

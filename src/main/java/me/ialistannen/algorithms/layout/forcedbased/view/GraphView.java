@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
@@ -22,15 +24,19 @@ import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
 public class GraphView<T> extends StackPane {
 
   private final List<NodeCircle<T>> circles;
+  private final AnchorPane circlePane;
+  private final List<ConnectionLine<T>> connectionLines;
+  private final AnchorPane linePane;
+  private final DragInteractionManager<T> dragInteractionManager;
 
   /**
    * Creates a new graph view.
    *
    * @param nodes the nodes to display
    */
-  public GraphView(List<Node<T>> nodes) {
-    AnchorPane circlePane = new AnchorPane();
-    AnchorPane linePane = new AnchorPane();
+  public GraphView(ObservableList<Node<T>> nodes) {
+    this.circlePane = new AnchorPane();
+    this.linePane = new AnchorPane();
 
     circlePane.setPickOnBounds(false);
     linePane.setPickOnBounds(false);
@@ -38,17 +44,31 @@ public class GraphView<T> extends StackPane {
 
     getChildren().addAll(linePane, circlePane);
 
+    nodes.addListener(new ListChangeListener<Node<T>>() {
+      @Override
+      public void onChanged(Change<? extends Node<T>> c) {
+        while (c.next()) {
+          circles.stream()
+              .filter(it -> c.getRemoved().contains(it.getNode()))
+              .forEach(GraphView.this::removeCircle);
+
+          for (Node<T> added : c.getAddedSubList()) {
+            addCircle(new NodeCircle<>(added));
+          }
+        }
+      }
+    });
+
     circles = nodes.stream()
         .map(NodeCircle::new)
         .collect(Collectors.toList());
 
-    circles
-        .forEach(node -> circlePane.getChildren().add(node));
+    connectionLines = connectionLines(circles);
 
-    connectionLines(circles)
-        .forEach(it -> linePane.getChildren().add(it));
+    circles.forEach(circlePane.getChildren()::add);
+    connectionLines.forEach(linePane.getChildren()::add);
 
-    DragInteractionManager<T> dragInteractionManager = new DragInteractionManager<>();
+    dragInteractionManager = new DragInteractionManager<>();
 
     circles
         .forEach(dragInteractionManager::registerCircleDragAndDrop);
@@ -62,6 +82,39 @@ public class GraphView<T> extends StackPane {
       circle.getNode().setActingForce(direction);
       circle.getNode().setPosition(currentPos);
     }));
+  }
+
+  private void removeCircle(NodeCircle<T> circle) {
+    circles.remove(circle);
+    circlePane.getChildren().remove(circle);
+
+    removeEdgesConnectedTo(circle);
+  }
+
+  private void removeEdgesConnectedTo(NodeCircle<T> circle) {
+    connectionLines.stream()
+        .filter(line -> line.isEndOrStartFor(circle))
+        .forEach(linePane.getChildren()::remove);
+  }
+
+  private void addCircle(NodeCircle<T> circle) {
+    circles.add(circle);
+    circlePane.getChildren().add(circle);
+    dragInteractionManager.registerCircleDragAndDrop(circle);
+
+    Node<T> node = circle.getNode();
+    for (Edge<T> edge : node.getEdges()) {
+      Node<T> end = edge.getEnd();
+
+      circles.stream()
+          .filter(it -> it.getNode().equals(end))
+          .findFirst()
+          .ifPresent(endCircle -> {
+            ConnectionLine<T> line = new ConnectionLine<>(circle, endCircle, edge);
+            connectionLines.add(line);
+            linePane.getChildren().add(line);
+          });
+    }
   }
 
   private List<ConnectionLine<T>> connectionLines(List<NodeCircle<T>> nodes) {
