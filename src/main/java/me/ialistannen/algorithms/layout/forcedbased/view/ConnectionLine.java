@@ -3,13 +3,14 @@ package me.ialistannen.algorithms.layout.forcedbased.view;
 import java.text.DecimalFormat;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Bounds;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Edge;
+import me.ialistannen.algorithms.layout.forcedbased.view.util.EditableLabel;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> the type of the nodes
  */
-public class ConnectionLine<T> extends Pane {
+public class ConnectionLine<T> extends AnchorPane {
 
   private final Line line;
   // NEVER MAKE THESE LOCAL VARIABLES. Due to some interesting design decisions in JavaFx,
@@ -37,6 +38,7 @@ public class ConnectionLine<T> extends Pane {
    */
   public ConnectionLine(NodeCircle<T> start, NodeCircle<T> end, Edge<T> edge) {
     getStylesheets().add("/css/nodelayout/ConnectionLine.css");
+    setPickOnBounds(false);
 
     line = new Line();
 
@@ -52,7 +54,13 @@ public class ConnectionLine<T> extends Pane {
     getChildren().add(line);
 
     if (edge.getWeight() != 0) {
-      Label weightLabel = new Label(DecimalFormat.getNumberInstance().format(edge.getWeight()));
+      EditableLabel weightLabel = new EditableLabel<>(
+          input -> DecimalFormat.getNumberInstance().parse(input).doubleValue(),
+          o -> System.out.println("Setting weight to " + o)
+      );
+      weightLabel.textProperty().bind(
+          new SimpleStringProperty(DecimalFormat.getNumberInstance().format(edge.getWeight()))
+      );
       weightLabel.getStyleClass().add("weight-label");
       weightLabel.translateXProperty().bind(
           line.startXProperty().add(line.endXProperty()).divide(2)

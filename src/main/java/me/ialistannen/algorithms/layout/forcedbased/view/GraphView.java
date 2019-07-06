@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Edge;
@@ -20,10 +19,8 @@ import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
  *
  * @param <T> the type of the graph
  */
-public class GraphView<T> extends FlowPane {
+public class GraphView<T> extends StackPane {
 
-  private AnchorPane circlePane;
-  private AnchorPane linePane;
   private final List<NodeCircle<T>> circles;
 
   /**
@@ -32,12 +29,14 @@ public class GraphView<T> extends FlowPane {
    * @param nodes the nodes to display
    */
   public GraphView(List<Node<T>> nodes) {
-    StackPane basePane = new StackPane();
-    this.circlePane = new AnchorPane();
-    this.linePane = new AnchorPane();
+    AnchorPane circlePane = new AnchorPane();
+    AnchorPane linePane = new AnchorPane();
 
-    basePane.getChildren().addAll(linePane, circlePane);
-    getChildren().add(basePane);
+    circlePane.setPickOnBounds(false);
+    linePane.setPickOnBounds(false);
+    setPickOnBounds(false);
+
+    getChildren().addAll(linePane, circlePane);
 
     circles = nodes.stream()
         .map(NodeCircle::new)
