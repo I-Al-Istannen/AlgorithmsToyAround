@@ -19,6 +19,9 @@ import javafx.beans.binding.ObjectBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -72,6 +75,26 @@ public class Test extends Application {
     timeline.play();
 
     root.setCenter(graphView);
+
+    root.setOnContextMenuRequested(event -> {
+      ContextMenu contextMenu = new ContextMenu();
+      MenuItem createNode = new MenuItem("Create node");
+
+      createNode.setOnAction(e -> {
+        TextInputDialog textInputDialog = new TextInputDialog();
+        textInputDialog.setTitle("Select a name");
+        textInputDialog.setHeaderText("Select the name of the node");
+        textInputDialog.showAndWait().ifPresent(name -> {
+          Node<String> node = new Node<>(name);
+          node.setPosition(windowCenterBinding.get().multiply(2));
+          nodes.add(node);
+        });
+      });
+
+      contextMenu.getItems().add(createNode);
+
+      contextMenu.show(graphView, event.getScreenX(), event.getScreenY());
+    });
 
     primaryStage.setScene(new Scene(root));
     primaryStage.setWidth(500);
