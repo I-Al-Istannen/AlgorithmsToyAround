@@ -5,7 +5,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,6 +17,7 @@ import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Edge;
 import me.ialistannen.algorithms.layout.forcedbased.tree.EdgeTraversal;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A view pane for a graph.
@@ -72,6 +75,7 @@ public class GraphView<T> extends StackPane {
 
     circles
         .forEach(dragInteractionManager::registerCircleDragAndDrop);
+    circles.forEach(this::registerEdgeListener);
 
     setOnMouseDragged(event -> dragInteractionManager.executeIfDragging((circle, startPos) -> {
       Vector2D currentPos = new Vector2D(event.getX(), event.getY())
@@ -106,15 +110,50 @@ public class GraphView<T> extends StackPane {
     for (Edge<T> edge : node.getEdges()) {
       Node<T> end = edge.getEnd();
 
-      circles.stream()
-          .filter(it -> it.getNode().equals(end))
-          .findFirst()
+      findCircleForNode(end)
           .ifPresent(endCircle -> {
             ConnectionLine<T> line = new ConnectionLine<>(circle, endCircle, edge);
             connectionLines.add(line);
             linePane.getChildren().add(line);
           });
     }
+
+    registerEdgeListener(circle);
+  }
+
+  private void registerEdgeListener(NodeCircle<T> circle) {
+    Node<T> node = circle.getNode();
+
+    node.registerEdgeListener(change -> {
+      if (change.wasRemoved()) {
+        Predicate<ConnectionLine<T>> isForChangedEdge = line -> {
+          Edge<T> removed = change.getValueRemoved();
+          return line.isEndOrStartFor(removed.getEnd()) && line.isEndOrStartFor(removed.getStart());
+        };
+        List<ConnectionLine<T>> toRemove = connectionLines.stream()
+            .filter(isForChangedEdge)
+            .collect(Collectors.toList());
+        toRemove.forEach(line -> {
+          connectionLines.remove(line);
+          linePane.getChildren().remove(line);
+        });
+      }
+      if (change.wasAdded()) {
+        Edge<T> added = change.getValueAdded();
+        findCircleForNode(added.getEnd()).ifPresent(endCircle -> {
+          ConnectionLine<T> connectionLine = new ConnectionLine<>(circle, endCircle, added);
+          connectionLines.add(connectionLine);
+          linePane.getChildren().add(connectionLine);
+        });
+      }
+    });
+  }
+
+  @NotNull
+  private Optional<NodeCircle<T>> findCircleForNode(Node<T> end) {
+    return circles.stream()
+        .filter(it -> it.getNode().equals(end))
+        .findFirst();
   }
 
   private List<ConnectionLine<T>> connectionLines(List<NodeCircle<T>> nodes) {

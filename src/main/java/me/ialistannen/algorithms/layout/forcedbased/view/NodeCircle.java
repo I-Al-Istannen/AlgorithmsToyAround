@@ -6,6 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
@@ -61,6 +65,35 @@ public class NodeCircle<T> extends GridPane {
     setupChildren();
 
     update();
+
+    setOnDragDetected(event -> {
+      if (!event.isControlDown()) {
+        return;
+      }
+      Dragboard dragboard = startDragAndDrop(TransferMode.LINK);
+      ClipboardContent content = new ClipboardContent();
+      content.putString("DRAGGING");
+      dragboard.setContent(content);
+    });
+    setOnDragOver(event -> {
+      if (event.getDragboard().getContent(DataFormat.PLAIN_TEXT).equals("DRAGGING")) {
+        event.acceptTransferModes(TransferMode.LINK);
+      } else {
+        event.acceptTransferModes(TransferMode.NONE);
+      }
+    });
+    setOnDragDropped(event -> {
+      Object source = event.getGestureSource();
+      if (source instanceof NodeCircle) {
+        @SuppressWarnings("unchecked")
+        NodeCircle<T> other = (NodeCircle<T>) source;
+        if (!other.getNode().isConnected(getNode())) {
+          other.getNode().addUnidirectionalConnection(getNode(), 1);
+        } else {
+          other.getNode().removeConnectionWith(getNode());
+        }
+      }
+    });
   }
 
   private void setupChildren() {

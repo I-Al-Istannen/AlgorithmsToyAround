@@ -2,9 +2,10 @@ package me.ialistannen.algorithms.layout.forcedbased.tree;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 
 /**
@@ -18,7 +19,7 @@ public class Node<T> {
   private Vector2D actingForce;
   private Vector2D position;
 
-  private Map<Node<T>, Edge<T>> neighbours;
+  private ObservableMap<Node<T>, Edge<T>> neighbours;
   private boolean pausePhysics;
 
   /**
@@ -31,7 +32,7 @@ public class Node<T> {
 
     this.actingForce = new Vector2D(0, 0);
     this.position = new Vector2D(0, 0);
-    this.neighbours = new HashMap<>();
+    this.neighbours = FXCollections.observableHashMap();
   }
 
   /**
@@ -101,13 +102,26 @@ public class Node<T> {
   }
 
   /**
+   * Adds a change listener that is notified when edges change.
+   *
+   * @param changeListener the change listener
+   */
+  public void registerEdgeListener(MapChangeListener<Node<T>, Edge<T>> changeListener) {
+    neighbours.addListener(changeListener);
+  }
+
+  /**
    * Adds a uni-directional connection.
    *
    * @param other the other node
    * @param weight the edge weight
    */
   public void addUnidirectionalConnection(Node<T> other, double weight) {
-    neighbours.put(other, new Edge<>(this, other, false, weight));
+    if (other.isConnected(this)) {
+      addBidirectionalConnection(other, weight);
+    } else {
+      neighbours.put(other, new Edge<>(this, other, false, weight));
+    }
   }
 
   /**

@@ -18,6 +18,9 @@ class DragInteractionManager<T> {
    */
   void registerCircleDragAndDrop(NodeCircle<T> circle) {
     circle.setOnMousePressed(event -> {
+      if (event.isControlDown()) {
+        return;
+      }
       state.circle = circle;
       Point3D point3D = circle.localToParent(event.getX(), event.getY(), event.getZ());
 

@@ -11,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Edge;
+import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
 import me.ialistannen.algorithms.layout.forcedbased.view.util.EditableLabel;
 import org.jetbrains.annotations.NotNull;
 
@@ -163,5 +164,14 @@ public class ConnectionLine<T> extends AnchorPane {
    */
   public boolean isEndOrStartFor(NodeCircle<T> circle) {
     return start.equals(circle) || end.equals(circle);
+  }
+  /**
+   * Returns whether the start or end point matches the given point.
+   *
+   * @param node the node to check
+   * @return true if the given point is the start or end point of this line
+   */
+  public boolean isEndOrStartFor(Node<T> node) {
+    return start.getNode().equals(node) || end.getNode().equals(node);
   }
 }
