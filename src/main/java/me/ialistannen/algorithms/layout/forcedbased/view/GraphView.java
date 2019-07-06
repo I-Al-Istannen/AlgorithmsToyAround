@@ -6,11 +6,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
@@ -51,12 +54,19 @@ public class GraphView<T> extends StackPane {
       @Override
       public void onChanged(Change<? extends Node<T>> c) {
         while (c.next()) {
-          circles.stream()
-              .filter(it -> c.getRemoved().contains(it.getNode()))
-              .forEach(GraphView.this::removeCircle);
+          if (c.wasRemoved()) {
+            circles.stream()
+                .filter(it -> c.getRemoved().contains(it.getNode()))
+                .collect(Collectors.toList()) // copy needed as we are iterating over it
+                .stream()
+                .forEach(GraphView.this::removeCircle);
 
-          for (Node<T> added : c.getAddedSubList()) {
-            addCircle(new NodeCircle<>(added));
+          }
+
+          if (c.wasAdded()) {
+            for (Node<T> added : c.getAddedSubList()) {
+              addCircle(new NodeCircle<>(added));
+            }
           }
         }
       }
@@ -75,6 +85,7 @@ public class GraphView<T> extends StackPane {
 
     circles
         .forEach(dragInteractionManager::registerCircleDragAndDrop);
+    circles.forEach(registerDeleteContextMenu(nodes));
     circles.forEach(this::registerEdgeListener);
 
     setOnMouseDragged(event -> dragInteractionManager.executeIfDragging((circle, startPos) -> {
@@ -86,6 +97,18 @@ public class GraphView<T> extends StackPane {
       circle.getNode().setActingForce(direction);
       circle.getNode().setPosition(currentPos);
     }));
+  }
+
+  private Consumer<NodeCircle<T>> registerDeleteContextMenu(ObservableList<Node<T>> nodes) {
+    return circle -> circle.setOnContextMenuRequested(event -> {
+      ContextMenu contextMenu = new ContextMenu();
+      MenuItem delete = new MenuItem("Delete");
+      delete.setOnAction(e -> nodes.remove(circle.getNode()));
+      contextMenu.getItems().add(delete);
+
+      event.consume();
+      contextMenu.show(circle, event.getScreenX(), event.getScreenY());
+    });
   }
 
   private void removeCircle(NodeCircle<T> circle) {

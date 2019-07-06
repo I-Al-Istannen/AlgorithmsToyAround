@@ -11,7 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
@@ -121,14 +120,6 @@ public class Test extends Application {
     ));
     ticker.setCycleCount(list.size());
 //    ticker.play();
-
-    PauseTransition pauseTransition = new PauseTransition(Duration.seconds(5));
-    pauseTransition.setOnFinished(event -> {
-      Node<String> node = new Node<>("Test");
-      node.addUnidirectionalConnection(nodes.get(2), 20);
-      nodes.add(node);
-    });
-    pauseTransition.playFromStart();
   }
 
   private List<Node<String>> getNodes(int maxX, int maxY) {

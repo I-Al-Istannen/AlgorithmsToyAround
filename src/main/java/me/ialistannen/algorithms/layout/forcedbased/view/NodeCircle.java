@@ -76,6 +76,11 @@ public class NodeCircle<T> extends GridPane {
       dragboard.setContent(content);
     });
     setOnDragOver(event -> {
+      if (event.getGestureSource() == this) {
+        event.acceptTransferModes(TransferMode.NONE);
+        return;
+      }
+
       if (event.getDragboard().getContent(DataFormat.PLAIN_TEXT).equals("DRAGGING")) {
         event.acceptTransferModes(TransferMode.LINK);
       } else {
@@ -87,6 +92,11 @@ public class NodeCircle<T> extends GridPane {
       if (source instanceof NodeCircle) {
         @SuppressWarnings("unchecked")
         NodeCircle<T> other = (NodeCircle<T>) source;
+
+        if (other == this) {
+          return;
+        }
+
         if (!other.getNode().isConnected(getNode())) {
           other.getNode().addUnidirectionalConnection(getNode(), 1);
         } else {
