@@ -194,4 +194,11 @@ public class Node<T> {
   public void setPausePhysics(boolean pausePhysics) {
     this.pausePhysics = pausePhysics;
   }
+
+  @Override
+  public String toString() {
+    return "Node{" +
+        "value=" + value +
+        '}';
+  }
 }

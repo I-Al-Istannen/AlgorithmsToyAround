@@ -46,7 +46,7 @@ public class Test extends Application {
     BorderPane root = new BorderPane();
 
     ObservableList<Node<String>> nodes = FXCollections.observableArrayList(
-        getMetaNodes(500, 500)
+        getANodes(500, 500)
     );
     GraphView<String> graphView = new GraphView<>(nodes);
 
@@ -187,6 +187,28 @@ public class Test extends Application {
 
     f.addUnidirectionalConnection(e, 1.0 / nodes.size());
 //    e.addUnidirectionalConnection(f, 1.0 / nodes.size());
+
+    randomizeLocation(maxX, maxY, nodes);
+    return nodes;
+  }
+
+  private List<Node<String>> getANodes(int maxX, int maxY) {
+    List<Node<String>> nodes = new ArrayList<>();
+
+    Node<String> a = new Node<>("a");
+    Node<String> b = new Node<>("b");
+    Node<String> c = new Node<>("c");
+    Node<String> d = new Node<>("d");
+
+    Collections.addAll(
+        nodes,
+        a, b, c, d
+    );
+
+    b.addUnidirectionalConnection(a, 0);
+    c.addUnidirectionalConnection(a, 0);
+    d.addUnidirectionalConnection(b, 0);
+    d.addUnidirectionalConnection(c, 0);
 
     randomizeLocation(maxX, maxY, nodes);
     return nodes;

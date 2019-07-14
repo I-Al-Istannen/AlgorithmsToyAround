@@ -21,6 +21,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.AlgoAPainting;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.BreadthFirst;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirst;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirstAlgoA;
@@ -141,6 +142,13 @@ public class GraphView<T> extends StackPane {
         replayActions(new DepthFirstAlgoA().run(allNodes));
       });
       contextMenu.getItems().add(startAlgoDFS);
+      MenuItem startAlgoAPainting = new MenuItem("Algo A Painting");
+      startAlgoAPainting.setOnAction(e -> {
+        List<Node<T>> allNodes = new ArrayList<>(nodes);
+        allNodes.add(0, circle.getNode());
+        replayActions(new AlgoAPainting().run(allNodes));
+      });
+      contextMenu.getItems().add(startAlgoAPainting);
 
       event.consume();
       contextMenu.show(circle, event.getScreenX(), event.getScreenY());
@@ -162,6 +170,9 @@ public class GraphView<T> extends StackPane {
     animationTimer = new Timeline(new KeyFrame(
         Duration.millis(500),
         event -> {
+          if (actions.isEmpty()) {
+            return;
+          }
           NodeChangeAction<T> action = actions.get(0);
           findCircleForNode(action.getNode()).ifPresent(action::apply);
           actions.remove(0);
