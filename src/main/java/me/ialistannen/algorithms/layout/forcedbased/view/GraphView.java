@@ -23,6 +23,7 @@ import javafx.util.Duration;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.BreadthFirst;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirst;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirstAlgoA;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DijkstraTraversal;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.NodeChangeAction;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Edge;
@@ -133,6 +134,13 @@ public class GraphView<T> extends StackPane {
           new DijkstraTraversal().run(Collections.singletonList(circle.getNode()))
       ));
       contextMenu.getItems().add(startDijkstra);
+      MenuItem startAlgoDFS = new MenuItem("Algo A DFS");
+      startAlgoDFS.setOnAction(e -> {
+        List<Node<T>> allNodes = new ArrayList<>(nodes);
+        allNodes.add(0, circle.getNode());
+        replayActions(new DepthFirstAlgoA().run(allNodes));
+      });
+      contextMenu.getItems().add(startAlgoDFS);
 
       event.consume();
       contextMenu.show(circle, event.getScreenX(), event.getScreenY());
