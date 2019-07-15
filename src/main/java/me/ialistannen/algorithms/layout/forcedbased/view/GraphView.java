@@ -45,6 +45,7 @@ public class GraphView<T> extends StackPane {
   private final List<ConnectionLine<T>> connectionLines;
   private final AnchorPane linePane;
   private final DragInteractionManager<T> dragInteractionManager;
+  private final ObservableList<Node<T>> nodes;
   private Timeline animationTimer;
 
   /**
@@ -53,6 +54,7 @@ public class GraphView<T> extends StackPane {
    * @param nodes the nodes to display
    */
   public GraphView(ObservableList<Node<T>> nodes) {
+    this.nodes = nodes;
     this.circlePane = new AnchorPane();
     this.linePane = new AnchorPane();
 
@@ -112,7 +114,11 @@ public class GraphView<T> extends StackPane {
   }
 
   private Consumer<NodeCircle<T>> registerDeleteContextMenu(ObservableList<Node<T>> nodes) {
-    return circle -> circle.setOnContextMenuRequested(event -> {
+    return circle -> registerDeleteContextMenu(nodes, circle);
+  }
+
+  private void registerDeleteContextMenu(ObservableList<Node<T>> nodes, NodeCircle<T> circle) {
+    circle.setOnContextMenuRequested(event -> {
       ContextMenu contextMenu = new ContextMenu();
 
       MenuItem delete = new MenuItem("Delete");
@@ -136,6 +142,7 @@ public class GraphView<T> extends StackPane {
           new DijkstraTraversal().run(Collections.singletonList(circle.getNode()))
       ));
       contextMenu.getItems().add(startDijkstra);
+
       MenuItem startAlgoDFS = new MenuItem("Algo A DFS");
       startAlgoDFS.setOnAction(e -> {
         List<Node<T>> allNodes = new ArrayList<>(nodes);
@@ -143,6 +150,7 @@ public class GraphView<T> extends StackPane {
         replayActions(new DepthFirstAlgoA().run(allNodes));
       });
       contextMenu.getItems().add(startAlgoDFS);
+
       MenuItem startAlgoAPainting = new MenuItem("Algo A Painting");
       startAlgoAPainting.setOnAction(e -> {
         List<Node<T>> allNodes = new ArrayList<>(nodes);
@@ -150,6 +158,7 @@ public class GraphView<T> extends StackPane {
         replayActions(new AlgoAPainting().run(allNodes));
       });
       contextMenu.getItems().add(startAlgoAPainting);
+
       MenuItem startAlgoBTest = new MenuItem("Algo B test");
       startAlgoBTest.setOnAction(e -> {
         List<Node<T>> allNodes = new ArrayList<>(nodes);
@@ -221,6 +230,7 @@ public class GraphView<T> extends StackPane {
     }
 
     registerEdgeListener(circle);
+    registerDeleteContextMenu(nodes, circle);
   }
 
   private void registerEdgeListener(NodeCircle<T> circle) {
