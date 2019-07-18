@@ -46,6 +46,7 @@ public class AlgoAPainting implements Traversal {
 
       if (markings.get(neighbour) == MarkStatus.SUCCESSFUL) {
         myMark = MarkStatus.SUCCESSFUL;
+        break;
       }
     }
 

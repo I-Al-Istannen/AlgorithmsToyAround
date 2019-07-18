@@ -23,6 +23,7 @@ import javafx.util.Duration;
 import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.AlgoAPainting;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.AlgoB;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.AlgoBNeaterSimulation;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.BreadthFirst;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirst;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirstAlgoA;
@@ -166,6 +167,14 @@ public class GraphView<T> extends StackPane {
         replayActions(new AlgoB().run(allNodes));
       });
       contextMenu.getItems().add(startAlgoBTest);
+
+      MenuItem startAlgoBSimulation = new MenuItem("Algo B simulation");
+      startAlgoBSimulation.setOnAction(e -> {
+        List<Node<T>> allNodes = new ArrayList<>(nodes);
+        allNodes.add(0, circle.getNode());
+        replayActions(new AlgoBNeaterSimulation().run(allNodes));
+      });
+      contextMenu.getItems().add(startAlgoBSimulation);
 
       event.consume();
       contextMenu.show(circle, event.getScreenX(), event.getScreenY());
