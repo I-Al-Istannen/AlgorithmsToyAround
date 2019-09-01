@@ -156,14 +156,15 @@ public class Node<T> {
    * @param edge the edge to alter
    */
   public void alterEdgeWeight(Edge<T> edge, double newWeight) {
-    if (!neighbours.containsKey(edge.getEnd())) {
+    Node<T> other = edge.getEnd().equals(this) ? edge.getStart() : edge.getEnd();
+    if (!neighbours.containsKey(other)) {
       return;
     }
 
     if (edge.isBidirectional()) {
-      addBidirectionalConnection(edge.getEnd(), newWeight);
+      addBidirectionalConnection(other, newWeight);
     } else {
-      addUnidirectionalConnection(this, newWeight);
+      addUnidirectionalConnection(other, newWeight);
     }
   }
 

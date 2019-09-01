@@ -24,6 +24,7 @@ import me.ialistannen.algorithms.layout.forcedbased.Vector2D;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.AlgoAPainting;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.AlgoB;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.AlgoBNeaterSimulation;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.BellmanFord;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.BreadthFirst;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirst;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirstAlgoA;
@@ -144,6 +145,12 @@ public class GraphView<T> extends StackPane {
       ));
       contextMenu.getItems().add(startDijkstra);
 
+      MenuItem startBellmanFord = new MenuItem("Start BellmanFord");
+      startBellmanFord.setOnAction(e -> replayActions(
+          new BellmanFord().run(nodes)
+      ));
+      contextMenu.getItems().add(startBellmanFord);
+
       MenuItem startAlgoDFS = new MenuItem("Algo A DFS");
       startAlgoDFS.setOnAction(e -> {
         List<Node<T>> allNodes = new ArrayList<>(nodes);
@@ -261,7 +268,14 @@ public class GraphView<T> extends StackPane {
       }
       if (change.wasAdded()) {
         Edge<T> added = change.getValueAdded();
+        System.out.println(added);
         findCircleForNode(added.getEnd()).ifPresent(endCircle -> {
+          // Just modified, nothing new
+          for (ConnectionLine<T> line : connectionLines) {
+            if (line.isEndOrStartFor(added.getStart()) && line.isEndOrStartFor(added.getEnd())) {
+              return;
+            }
+          }
           ConnectionLine<T> connectionLine = new ConnectionLine<>(circle, endCircle, added);
           connectionLines.add(connectionLine);
           linePane.getChildren().add(connectionLine);
