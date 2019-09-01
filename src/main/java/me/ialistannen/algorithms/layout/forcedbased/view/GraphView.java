@@ -30,6 +30,7 @@ import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirst;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DepthFirstAlgoA;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.DijkstraTraversal;
 import me.ialistannen.algorithms.layout.forcedbased.traversal.NodeChangeAction;
+import me.ialistannen.algorithms.layout.forcedbased.traversal.WeirdAlgoSolution;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Edge;
 import me.ialistannen.algorithms.layout.forcedbased.tree.EdgeTraversal;
 import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
@@ -183,6 +184,13 @@ public class GraphView<T> extends StackPane {
       });
       contextMenu.getItems().add(startAlgoBSimulation);
 
+      MenuItem weirdAlgoSolution = new MenuItem("Weird algo solution");
+      weirdAlgoSolution.setOnAction(e -> {
+        List<Node<T>> allNodes = new ArrayList<>(nodes);
+        replayActions(new WeirdAlgoSolution().run(allNodes));
+      });
+      contextMenu.getItems().add(weirdAlgoSolution);
+
       event.consume();
       contextMenu.show(circle, event.getScreenX(), event.getScreenY());
     });
@@ -268,7 +276,6 @@ public class GraphView<T> extends StackPane {
       }
       if (change.wasAdded()) {
         Edge<T> added = change.getValueAdded();
-        System.out.println(added);
         findCircleForNode(added.getEnd()).ifPresent(endCircle -> {
           // Just modified, nothing new
           for (ConnectionLine<T> line : connectionLines) {
