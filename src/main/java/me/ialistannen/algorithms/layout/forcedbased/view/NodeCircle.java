@@ -21,6 +21,10 @@ import me.ialistannen.algorithms.layout.forcedbased.tree.Node;
  */
 public class NodeCircle<T> extends GridPane {
 
+  private static FXMLLoader loader = new FXMLLoader(
+      NodeCircle.class.getResource("/fxml/nodelayout/NodeCircle.fxml")
+  );
+
   private final Node<T> node;
 
   @FXML
@@ -47,9 +51,6 @@ public class NodeCircle<T> extends GridPane {
   public NodeCircle(Node<T> node) {
     this.node = node;
 
-    FXMLLoader loader = new FXMLLoader(
-        getClass().getResource("/fxml/nodelayout/NodeCircle.fxml")
-    );
     loader.setRoot(this);
     loader.setController(this);
     try {

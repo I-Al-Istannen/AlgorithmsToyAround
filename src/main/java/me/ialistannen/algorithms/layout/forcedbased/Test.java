@@ -46,7 +46,7 @@ public class Test extends Application {
     BorderPane root = new BorderPane();
 
     ObservableList<Node<String>> nodes = FXCollections.observableArrayList(
-        getTwoNodes(500, 500)
+        getDominoNodes(500, 500)
     );
     GraphView<String> graphView = new GraphView<>(nodes);
 
@@ -85,7 +85,7 @@ public class Test extends Application {
         textInputDialog.setHeaderText("Select the name of the node");
         textInputDialog.showAndWait().ifPresent(name -> {
           Node<String> node = new Node<>(name);
-          node.setPosition(windowCenterBinding.get().multiply(2));
+          node.setPosition(new Vector2D(event.getX(), event.getY()));
           nodes.add(node);
         });
       });
